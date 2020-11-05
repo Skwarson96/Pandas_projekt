@@ -39,16 +39,28 @@ def zad1():
         index = index + 3
         print(index)
 
-    print(df)
+    return df
 
 
+def zad2(data):
+    ''' Określi ile różnych (unikalnych) imion zostało nadanych w tym czasie. '''
+    print(data)
+    unique_names = []
+    list_of_years = list(range(1880, 2020))
+    print(list_of_years)
 
-
-
+    for column in data.columns:
+        if column[5:9] == "Name":
+            for name in data[column]:
+                if name not in unique_names:
+                    unique_names.append(name)
+                    print(name)
+    print(len(unique_names))
+    # 99445
 
 def main():
-    zad1()
-
+    data = zad1()
+    zad2(data)
 
 if __name__ == '__main__':
     main()
