@@ -8,6 +8,7 @@ from pandas import DataFrame
 
 
 def zad1():
+    ''' Wczytaj dane ze wszystkich plików do pojedynczej tablicy (używając Pandas). '''
     os.chdir(r'names')
     list_of_txt_files = glob.glob('*.txt')
     list_of_txt_files.sort()
@@ -59,6 +60,7 @@ def zad2(data):
     # 99445
 
 def zad3(data):
+    ''' Określi ile różnych (unikalnych) imion zostało nadanych w tym czasie rozróżniając imiona męskie i żeńskie. '''
     print(data)
     unique_female_names = []
     unique_male_names = []
@@ -81,12 +83,30 @@ def zad3(data):
     # 68332
     print(len(unique_male_names))
     # 42054
-    
+
+def zad4(data):
+    ''' Stwórz nowe kolumny frequency_male i frequency_female i określ popularność każdego z imion w danym każdym
+    roku dzieląc liczbę razy, kiedy imię zostało nadane przez całkowita liczbę urodzeń dla danej płci.  '''
+    list_of_years = list(range(1880, 2020))
+
+    data2 = data.groupby(['1880 Sex']).sum()
+    for year in list_of_years:
+        sum_of_female_names = data2.loc['F', str(year) + ' Number']
+        sum_of_male_names = data2.loc['M', str(year) + ' Number']
+        # print(sum_of_female_names)
+        # print(sum_of_male_names)
+
+        data[str(year) + ' frequency_female'] = data[str(year) + ' Number']/sum_of_female_names
+        data[str(year) + ' frequency_male'] = data[str(year) + ' Number']/sum_of_male_names
+
+    print(data)
+
+
 def main():
     data = zad1()
     # zad2(data)
-    zad3(data)
-
+    # zad3(data)
+    zad4(data)
 
 
 if __name__ == '__main__':
