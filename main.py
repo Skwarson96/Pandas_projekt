@@ -58,9 +58,36 @@ def zad2(data):
     print(len(unique_names))
     # 99445
 
+def zad3(data):
+    print(data)
+    unique_female_names = []
+    unique_male_names = []
+    list_of_years = list(range(1880, 2020))
+
+    for year in list_of_years:
+        for index in data.index:
+            # print(data.loc[index, str(year) + " Name"], data.loc[index, str(year) + " Sex"])
+
+            if data.loc[index, str(year) + " Sex"] == 'F' and data.loc[index, str(year) + " Name"] not in unique_female_names:
+                unique_female_names.append(data.loc[index, str(year) + " Name"])
+                print(data.loc[index, str(year) + " Name"], data.loc[index, str(year) + " Sex"])
+
+            if data.loc[index, str(year) + " Sex"] == 'M' and data.loc[index, str(year) + " Name"] not in unique_male_names:
+                unique_male_names.append(data.loc[index, str(year) + " Name"])
+                print(data.loc[index, str(year) + " Name"], data.loc[index, str(year) + " Sex"])
+        # print()
+
+    print(len(unique_female_names))
+    # 68332
+    print(len(unique_male_names))
+    # 42054
+    
 def main():
     data = zad1()
-    zad2(data)
+    # zad2(data)
+    zad3(data)
+
+
 
 if __name__ == '__main__':
     main()
