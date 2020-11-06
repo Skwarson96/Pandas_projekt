@@ -52,14 +52,16 @@ def zad1_2():
     df = pd.DataFrame(columns=columns)
 
     for name_of_file in list_of_txt_files:
+        print(name_of_file)
         df1 = pd.DataFrame(pd.read_csv(name_of_file, sep=',', header=None))
         df1 = df1.rename(columns={0:"Name", 1:"Sex", 2:"Number"})
         df1["Year"] = str(name_of_file[3:7])
         # print(type(df))
         df = df.append(df1)
+    data2 = df.pivot(index=['Year', 'Name'], columns=['Sex'], values=['Number'])
 
-    print(df)
-
+    # print(df)
+    return data2
 def zad2(data):
     ''' Określi ile różnych (unikalnych) imion zostało nadanych w tym czasie. '''
     print(data)
@@ -123,14 +125,24 @@ def zad4(data):
     # 1880 90994.0
     # 1880 110490.0
 
+def zad4_2(data):
+    # print(data)
+    data2 = data.groupby(level=0).sum()
+    # print(data2)
+
+    data['Number','frequency_female'] = data.loc[:,('Number', 'F')]/data2.loc[:,('Number', 'F')]
+    data['Number', 'frequency_male'] = data.loc[:,('Number', 'M')]/data2.loc[:,('Number', 'M')]
+    print(data)
+
+
 
 def main():
     # data = zad1()
-    zad1_2()
+    data2 = zad1_2()
     # zad2(data)
     # zad3(data)
     # zad4(data)
-
+    zad4_2(data2)
 
 if __name__ == '__main__':
     main()
