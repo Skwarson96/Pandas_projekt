@@ -42,6 +42,23 @@ def zad1():
 
     return df
 
+def zad1_2():
+    ''' Wczytaj dane ze wszystkich plików do pojedynczej tablicy (używając Pandas). '''
+    os.chdir(r'names')
+    list_of_txt_files = glob.glob('*.txt')
+    list_of_txt_files.sort()
+    columns = [ "Name", "Sex", "Number", "Year"]
+
+    df = pd.DataFrame(columns=columns)
+
+    for name_of_file in list_of_txt_files:
+        df1 = pd.DataFrame(pd.read_csv(name_of_file, sep=',', header=None))
+        df1 = df1.rename(columns={0:"Name", 1:"Sex", 2:"Number"})
+        df1["Year"] = str(name_of_file[3:7])
+        # print(type(df))
+        df = df.append(df1)
+
+    print(df)
 
 def zad2(data):
     ''' Określi ile różnych (unikalnych) imion zostało nadanych w tym czasie. '''
@@ -91,22 +108,28 @@ def zad4(data):
 
     data2 = data.groupby(['1880 Sex']).sum()
     for year in list_of_years:
+        data[str(year) + ' frequency_female'] = None
+        data[str(year) + ' frequency_male'] = None
         sum_of_female_names = data2.loc['F', str(year) + ' Number']
         sum_of_male_names = data2.loc['M', str(year) + ' Number']
-        # print(sum_of_female_names)
-        # print(sum_of_male_names)
+        print(str(year), sum_of_female_names)
+        print(str(year), sum_of_male_names)
 
         data[str(year) + ' frequency_female'] = data[str(year) + ' Number']/sum_of_female_names
         data[str(year) + ' frequency_male'] = data[str(year) + ' Number']/sum_of_male_names
 
-    print(data)
+    print(data[['1880 Name', '1880 Sex', '1880 Number', '1880 frequency_female', '1880 frequency_male']])
+
+    # 1880 90994.0
+    # 1880 110490.0
 
 
 def main():
-    data = zad1()
+    # data = zad1()
+    zad1_2()
     # zad2(data)
     # zad3(data)
-    zad4(data)
+    # zad4(data)
 
 
 if __name__ == '__main__':
