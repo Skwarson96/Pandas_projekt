@@ -4,7 +4,7 @@ import numpy as np
 import os
 import glob
 from pandas import DataFrame
-
+import operator
 
 
 def zad1():
@@ -62,6 +62,7 @@ def zad1_2():
 
     # print(df)
     return data2
+
 def zad2(data):
     ''' Określi ile różnych (unikalnych) imion zostało nadanych w tym czasie. '''
     print(data)
@@ -129,12 +130,35 @@ def zad4_2(data):
     # print(data)
     data2 = data.groupby(level=0).sum()
     # print(data2)
+    data_zad4 = data.copy()
+    data_zad4['Number','frequency_female'] = data.loc[:,('Number', 'F')]/data2.loc[:,('Number', 'F')]
+    data_zad4['Number', 'frequency_male'] = data.loc[:,('Number', 'M')]/data2.loc[:,('Number', 'M')]
+    print(data_zad4)
 
-    data['Number','frequency_female'] = data.loc[:,('Number', 'F')]/data2.loc[:,('Number', 'F')]
-    data['Number', 'frequency_male'] = data.loc[:,('Number', 'M')]/data2.loc[:,('Number', 'M')]
-    print(data)
+def zad5_2(data):
+    '''Określ i wyświetl wykres złożony z dwóch podwykresów, gdzie osią x jest skala czasu, a oś y reprezentuje:
+    - liczbę urodzin w danym roku (wykres na górze)
+    - stosunek liczby narodzin dziewczynek do liczby narodzin chłopców (wykres na dole)
+     którym roku zanotowano najmniejszą, a w którym największą różnicę w liczbie urodzeń między chłopcami a dziewczynkami?
+    '''
 
+    list_of_years = list(range(1880, 2020))
+    quantity_of_birth = []
+    ratio_boys_to_girls = {}
+    data2 = data.groupby(level=0).sum()
+    # print(data2)
 
+    for year in list_of_years:
+        quantity_of_birth.append(data2.loc[str(year),('Number', 'F')] + data2.loc[str(year),('Number', 'M')])
+        ratio_boys_to_girls[year] = (data2.loc[str(year),('Number', 'F')].astype(float) / data2.loc[str(year),('Number', 'M')].astype(float))
+
+    print("Najwieksza roznica: ", max(ratio_boys_to_girls, key=ratio_boys_to_girls.get))
+    print("Najmniejsza roznica: ", min(ratio_boys_to_girls, key=ratio_boys_to_girls.get))
+
+    fig, ax = plt.subplots()
+    ax.plot(list_of_years, quantity_of_birth, '--r')
+    ax.plot(list_of_years, ratio_boys_to_girls.values(), '-b')
+    plt.show()
 
 def main():
     # data = zad1()
@@ -142,7 +166,9 @@ def main():
     # zad2(data)
     # zad3(data)
     # zad4(data)
-    zad4_2(data2)
+    # zad4_2(data2)
+    zad5_2(data2)
+
 
 if __name__ == '__main__':
     main()
