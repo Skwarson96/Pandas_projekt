@@ -200,8 +200,9 @@ def top_female(data):
     sort_female = sorted(top_all.items(), key=lambda x: x[1], reverse=True)
     # print(len(sort_female))
     # print(type(sort_female))
-    print("Top female names:")
-    print(sort_female[:1000])
+    # print("Top female names:")
+    # print(sort_female[:1000])
+    return sort_female[:1000]
 
 def top_male(data):
     most_male_for_year = []
@@ -231,16 +232,19 @@ def top_male(data):
 
     sort_male = sorted(top_all.items(), key=lambda x: x[1], reverse=True)
 
-    print("Top male names:")
-    print(sort_male[:1000])
+    # print("Top male names:")
+    # print(sort_male[:1000])
+    return sort_male[:1000]
 
 def zad6_2(data):
     '''Wyznacz 1000 najpopularniejszych imion dla każdej płci w całym zakresie czasowym,
      metoda powinna polegać na wyznaczeniu 1000 najpopularniejszych imion dla każdego roku i dla każdej płci a
      następnie ich zsumowaniu w celu ustalenia rankingu top 1000 dla każdej płci.'''
-    top_female(data)
+    print("Top female names:")
+    print(top_female(data))
     # ('Mary', 4128052)
-    top_male(data)
+    print("Top male names:")
+    print(top_male(data))
     # ('James', 5177716)
 
 def zad7_2(data):
@@ -326,7 +330,79 @@ def zad7_2(data):
     ax2.legend(['Mary', 'Marilin', 'James', 'Harry'])
     plt.show()
 
+def zad8_2(data):
+    '''
+    Wykreśl wykres z podziałem na lata i płeć zawierający informację jaki procent w danym roku
+    stanowiły imiona należące do rankingu top1000. Wykres ten opisuje różnorodność imion,
+    zanotuj rok w którym zaobserwowano największą różnicę w różnorodności między imionami męskimi a żeńskimi.
+    '''
+    # print(data)
+    list_of_years = list(range(1880, 2020))
+    top_female_ = top_female(data)
+    top_male_ = top_male(data)
+    # print(type(top_female_))
+    # print(top_female_)
+    # print(top_male_)
 
+    sum_of_female_names_from_top1000 = 0
+    dict_female_top1000 = {}
+    sum_of_male_names_from_top1000 = 0
+    dict_male_top1000 = {}
+
+
+    dict_female_all = {}
+    dict_male_all = {}
+    data2 = data.groupby(level=0).sum()
+    # print(data2)
+    for year in list_of_years:
+        dict_female_all[year] = data2.loc[str(year),('Number', 'F')]
+        dict_male_all[year] = data2.loc[str(year),('Number', 'M')]
+        # print(data2.loc[str(year),('Number', 'F')])
+    # print(dict_female_all)
+
+
+    for year in list_of_years:
+        # print("YEAR", year)
+        for name, q in top_female_:
+            try:
+                # print(name)
+                # print(data.loc[(str(year), name), ('Number', 'F')])
+                if pd.isna(data.loc[(str(year), name), ('Number', 'F')]):
+                    pass
+                else:
+                    sum_of_female_names_from_top1000 = sum_of_female_names_from_top1000 + data.loc[(str(year), name), ('Number', 'F')]
+                    # print(sum_of_female_names_from_top1000)
+            except KeyError:
+                pass
+        # -----------------------
+        for name, q in top_male_:
+            try:
+                if pd.isna(data.loc[(str(year), name), ('Number', 'M')]):
+                    pass
+                else:
+                    sum_of_male_names_from_top1000 = sum_of_male_names_from_top1000 + data.loc[(str(year), name), ('Number', 'M')]
+            except KeyError:
+                pass
+
+        # print("YEAR SUM",sum_of_female_names_from_top1000)
+        dict_female_top1000[year] = sum_of_female_names_from_top1000
+        dict_male_top1000[year] = sum_of_male_names_from_top1000
+        sum_of_female_names_from_top1000 = 0
+        sum_of_male_names_from_top1000 = 0
+    # print(dict_female_top1000)
+    # print(dict_female_all)
+
+    female_ratio = []
+    male_ratio = []
+    for year in list_of_years:
+        female_ratio.append(dict_female_top1000[year] / dict_female_all[year])
+        male_ratio.append(dict_male_top1000[year] / dict_male_all[year])
+
+    fig, ax = plt.subplots()
+    ax.plot(list_of_years, female_ratio, '-r')
+    ax.plot(list_of_years, male_ratio, '-b')
+    plt.show()
+    pass
 
 
 
@@ -339,8 +415,8 @@ def main():
     # zad4_2(data2)
     # zad5_2(data2)
     # zad6_2(data2)
-    zad7_2(data2)
-
+    # zad7_2(data2)
+    zad8_2(data2)
 
 
 
