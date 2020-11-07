@@ -62,6 +62,7 @@ def zad1_2():
 
     # print(df)
     return data2
+    # return df
 
 def zad2(data):
     ''' Określi ile różnych (unikalnych) imion zostało nadanych w tym czasie. '''
@@ -160,6 +161,90 @@ def zad5_2(data):
     ax.plot(list_of_years, ratio_boys_to_girls.values(), '-b')
     plt.show()
 
+def top_female(data):
+    most_female_for_year = []
+    list_of_years = list(range(1880, 2020))
+    # print(data)
+
+    female_sort_data = data.sort_values(by=['Year', ('Number', 'F')], ascending=False)
+    # print(female_sort_data)
+    # print(female_sort_data.loc[['1880'], [('Number', 'F')]].head(1000))
+    top_all = {}
+    for year in list_of_years:
+        # print(year)
+        most_female_for_year = []
+        list1 = []
+        top_year_list_dict = {}
+        female_sort_data2 = female_sort_data.loc[[str(year)], [('Number', 'F')]].head(1000)
+        # print(female_sort_data2.loc[(str(year)),('Number', 'F')])
+        for idx in range(1000):
+            most_female_for_year.append(female_sort_data2.index[idx][1])
+            pass
+        # print(female_sort_data2.index[0][1])
+        # print(type(female_sort_data2.index[0]))
+        # print(most_female_for_year)
+        # print(type(female_sort_data2.loc[('1880'),('Number', 'F')]))
+
+        list1 = female_sort_data2.loc[(str(year)), ('Number', 'F')].tolist()
+        # print(list1)
+        top_year_list_dict = dict(zip(most_female_for_year, list1))
+        # print(top_year_list_dict)
+
+        for key, value in top_year_list_dict.items():
+            if key in top_all.keys():
+                top_all[key] = top_all[key] + value
+            else:
+                top_all[key] = value
+
+    # print(top_all)
+    # print(len(top_all))
+    sort_female = sorted(top_all.items(), key=lambda x: x[1], reverse=True)
+    # print(len(sort_female))
+    # print(type(sort_female))
+    print("Top female names:")
+    print(sort_female[:1000])
+
+def top_male(data):
+    most_male_for_year = []
+    list_of_years = list(range(1880, 2020))
+
+    male_sort_data = data.sort_values(by=['Year', ('Number', 'M')], ascending=False)
+
+    top_all = {}
+    for year in list_of_years:
+        # print(year)
+        most_male_for_year = []
+        list1 = []
+        top_year_list_dict = {}
+        male_sort_data2 = male_sort_data.loc[[str(year)], [('Number', 'M')]].head(1000)
+
+        for idx in range(1000):
+            most_male_for_year.append(male_sort_data2.index[idx][1])
+
+        list1 = male_sort_data2.loc[(str(year)), ('Number', 'M')].tolist()
+        top_year_list_dict = dict(zip(most_male_for_year, list1))
+
+        for key, value in top_year_list_dict.items():
+            if key in top_all.keys():
+                top_all[key] = top_all[key] + value
+            else:
+                top_all[key] = value
+
+    sort_male = sorted(top_all.items(), key=lambda x: x[1], reverse=True)
+
+    print("Top male names:")
+    print(sort_male[:1000])
+
+
+def zad6_2(data):
+    '''Wyznacz 1000 najpopularniejszych imion dla każdej płci w całym zakresie czasowym,
+     metoda powinna polegać na wyznaczeniu 1000 najpopularniejszych imion dla każdego roku i dla każdej płci a
+     następnie ich zsumowaniu w celu ustalenia rankingu top 1000 dla każdej płci.'''
+    top_female(data)
+    # ('Mary', 4128052)
+    top_male(data)
+    # ('James', 5177716)
+
 def main():
     # data = zad1()
     data2 = zad1_2()
@@ -167,8 +252,8 @@ def main():
     # zad3(data)
     # zad4(data)
     # zad4_2(data2)
-    zad5_2(data2)
-
+    # zad5_2(data2)
+    # zad6_2(data2)
 
 if __name__ == '__main__':
     main()
