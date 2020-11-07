@@ -60,7 +60,6 @@ def zad1_2():
         df = df.append(df1)
     data2 = df.pivot(index=['Year', 'Name'], columns=['Sex'], values=['Number'])
 
-    # print(df)
     return data2
     # return df
 
@@ -235,7 +234,6 @@ def top_male(data):
     print("Top male names:")
     print(sort_male[:1000])
 
-
 def zad6_2(data):
     '''Wyznacz 1000 najpopularniejszych imion dla każdej płci w całym zakresie czasowym,
      metoda powinna polegać na wyznaczeniu 1000 najpopularniejszych imion dla każdego roku i dla każdej płci a
@@ -244,6 +242,93 @@ def zad6_2(data):
     # ('Mary', 4128052)
     top_male(data)
     # ('James', 5177716)
+
+def zad7_2(data):
+    '''
+    Wyświetl wykresy zmian dla imion Harry i Marilin oraz pierwszego imienia w żeńskiego i męskiego w rankingu:
+     - na osi Y po lewej liczbę razy kiedy imę zostało nadane w każdym roku (zanotuj ile razy nadano to imię w 1940, 1980 i 2019r)?
+     - na osi Y po prawej popularność tych imion w każdym z lat
+    '''
+    # 'Mary', 'James', 'Harry', 'Marilin'
+    mary_dict = {}
+    james_dict = {}
+    harry_dict = {}
+    marilin_dict = {}
+
+    # print(data)
+    list_of_years = list(range(1880, 2020))
+    special_years = [1940, 1980, 2019]
+
+    special_mary_dict = {}
+    special_james_dict = {}
+    special_harry_dict = {}
+    special_marilin_dict = {}
+
+    # print(data.loc[('1880', 'Mary'), ('Number', 'F')])
+
+    for year in list_of_years:
+        try:
+            mary_dict[year] = data.loc[(str(year), 'Mary'), ('Number', 'F')]
+        except KeyError:
+            mary_dict[year] = 0
+        try:
+            marilin_dict[year] = data.loc[(str(year), 'Marilin'), ('Number', 'F')]
+        except KeyError:
+            marilin_dict[year] = 0
+        try:
+            james_dict[year] = data.loc[(str(year), 'James'), ('Number', 'M')]
+        except KeyError:
+            james_dict[year] = 0
+        try:
+            harry_dict[year] = data.loc[(str(year), 'Harry'), ('Number', 'M')]
+        except KeyError:
+            harry_dict[year] = 0
+        #--------------------------------------
+        if year in special_years:
+            try:
+                special_mary_dict[year] = data.loc[(str(year), 'Mary'), ('Number', 'F')]
+            except KeyError:
+                special_mary_dict[year] = 0
+            try:
+                special_marilin_dict[year] = data.loc[(str(year), 'Marilin'), ('Number', 'F')]
+            except KeyError:
+                special_marilin_dict[year] = 0
+            try:
+                special_james_dict[year] = data.loc[(str(year), 'James'), ('Number', 'M')]
+            except KeyError:
+                special_james_dict[year] = 0
+            try:
+                special_harry_dict[year] = data.loc[(str(year), 'Harry'), ('Number', 'M')]
+            except KeyError:
+                special_harry_dict[year] = 0
+
+    # print(mary_dict)
+    # print(marilin_dict)
+    # print(james_dict)
+    # print(harry_dict)
+    #
+    # print(special_mary_dict)
+    # print(special_marilin_dict)
+    # print(special_james_dict)
+    # print(special_harry_dict)
+
+    fig, ax1 = plt.subplots()
+    ax1.plot(special_years, special_mary_dict.values(), '--r')
+    ax1.plot(special_years, special_marilin_dict.values(), '--b')
+    ax1.plot(special_years, special_james_dict.values(), '--k')
+    ax1.plot(special_years, special_harry_dict.values(), '--g')
+
+    ax2 = ax1.twinx()
+    ax2.plot(list_of_years, mary_dict.values(), '-r')
+    ax2.plot(list_of_years, marilin_dict.values(), '-b')
+    ax2.plot(list_of_years, james_dict.values(), '-k')
+    ax2.plot(list_of_years, harry_dict.values(), '-g')
+    ax2.legend(['Mary', 'Marilin', 'James', 'Harry'])
+    plt.show()
+
+
+
+
 
 def main():
     # data = zad1()
@@ -254,6 +339,10 @@ def main():
     # zad4_2(data2)
     # zad5_2(data2)
     # zad6_2(data2)
+    zad7_2(data2)
+
+
+
 
 if __name__ == '__main__':
     main()
