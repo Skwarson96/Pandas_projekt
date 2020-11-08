@@ -78,6 +78,9 @@ def zad2(data):
                     print(name)
     print(len(unique_names))
     # 99445
+    # !!!!!!!!!!!!!!!
+    #     print(data.groupby(level=1).sum())
+    #
 
 def zad3(data):
     ''' Określi ile różnych (unikalnych) imion zostało nadanych w tym czasie rozróżniając imiona męskie i żeńskie. '''
@@ -404,6 +407,95 @@ def zad8_2(data):
     plt.show()
     pass
 
+def zad9_2(data):
+    '''
+    Zweryfikuj hipotezę czy prawdą jest, że w obserwowanym okresie rozkład ostatnich liter imion męskich uległ istotnej
+    zmianie? W tym celu:
+     - dokonaj agregacji wszystkich urodzeń w pełnym zbiorze danych z podziałem na rok i płeć i ostatnią literę,
+     - wyodrębnij dane dla lat 1910, 1960, 2015
+     - znormalizuj dane względem całkowitej liczby urodzin w danym roku
+     - wyświetl dane popularności litery dla każdej płci w postaci wykresu słupkowego zawierającego
+      poszczególne lata i gdzie słupki grupowane są wg litery. Zanotuj, dla której litery wystąpił
+      największy wzrost/spadek między rokiem 1910 a 2015)
+     - Dla 3 liter dla których zaobserwowano największą zmianę wyświetl przebieg trendu popularności w czasie
+    '''
+
+    print("???")
+    # print(data)
+    #
+    # special_years = [1910, 1960, 2015]
+    #
+    # female_last_letters = []
+
+def zad10_2(data):
+    '''
+    Znajdź imiona, które nadawane były zarówno dziewczynkom jak i chłopcom
+    (zanotuj najpopularniejsze imię męskie i żeńskie)
+    '''
+    # print(data)
+
+    # list_of_years = list(range(1880, 2020))
+    # dubble_sex_names = {}
+
+    # print(data.index[0])
+    # print(data.index[0][0])
+    # print(data.index[0][1])
+    # print(data.index[1])
+    # print(data.loc[('1880', data.index[0][1]), ('Number', 'F')])
+    # print(data.loc['1880'])
+    # print(np.shape(data.loc['1880']))
+    # print(data.loc['1881'])
+    # print(np.shape(data.loc['1881']))
+    # print(data.index)
+    # print(type(data.index))
+    # for year in list_of_years:
+    #     print(year)
+    #     print("shape:", np.shape(data.loc[str(year)])[0])
+    #     for idx in range(np.shape(data)[0]):
+    #         if data.index[idx][0] == str(year):
+    #             # pass
+    #             # print(idx)
+    #             print(data.index[idx][1])
+    #             if pd.isna(data.loc[(str(year), data.index[idx][1]), ('Number', 'F')]) or pd.isna(data.loc[(str(year), data.index[idx][1]), ('Number', 'M')]):
+    #                 # print("Nan")
+    #                 pass
+    #             else:
+    #                 print("Name:", data.index[idx][1], "Q:", data.loc[(str(year), data.index[idx][1]), ('Number', 'F')])
+
+    # data2 = data.sum(axis=1)
+    # print(data2)
+    # print(data2.loc[])
+    # for idx in range(np.shape(data2)[0]):
+    #     # pass
+    #     # print(idx)
+    #     print(data2.index[idx][0])
+    #     if pd.isna(data.loc[(data.index[idx][0], data.index[idx][1]), ('Number', 'F')]) or pd.isna(data.loc[(data.index[idx][0], data.index[idx][1]), ('Number', 'M')]):
+    #         # print("Nan")
+    #         pass
+    #     else:
+    #         try:
+    #             # print("Name:", data.index[idx][1], "Q:", data.loc[(data.index[idx][0], data.index[idx][1]), ('Number', 'F')] + data.loc[(data.index[idx][0], data.index[idx][1]), ('Number', 'M')])
+    #             sum = data.loc[(data.index[idx][0], data.index[idx][1]), ('Number', 'F')] + data.loc[(data.index[idx][0], data.index[idx][1]), ('Number', 'M')]
+    #             dubble_sex_names[data.index[idx][1]] = dubble_sex_names[data.index[idx][1]] + sum
+    #         except KeyError:
+    #             pass
+    #
+    # print(dubble_sex_names)
+    # sort_ = sorted(dubble_sex_names.items(), key=lambda x: x[1], reverse=True)
+    # print(sort_[10])
+
+    data2 = data.dropna()
+    # print(data2)
+    data2 = data2.sum(axis=1)
+    # print(data2)
+    data2 = data2.groupby(level="Name").sum()
+    # print(data2)
+    data2 = data2.sort_values()
+    # print(data2)
+    print(data2.index[-1])
+    # print(type(data2))
+
+
 
 
 def main():
@@ -416,7 +508,10 @@ def main():
     # zad5_2(data2)
     # zad6_2(data2)
     # zad7_2(data2)
-    zad8_2(data2)
+    # zad8_2(data2)
+    # zad9_2(data2)
+    zad10_2(data2)
+
 
 
 
