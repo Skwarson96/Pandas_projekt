@@ -658,24 +658,86 @@ def zad11_2(data):
     data2 = data.dropna()
     print(data2)
 
-
 def zad12():
+    '''
+    Wczytaj dane z bazy opisującej śmiertelność w okresie od 1959-2018r w poszczególnych grupach wiekowych: USA_ltper_1x1.sqlite,
+    opis: https://www.mortality.org/Public/ExplanatoryNotes.php.
+    Spróbuj zagregować dane już na etapie zapytania SQL.
+    '''
+    os.chdir('..')  # back to main folder
     conn = sqlite3.connect("USA_ltper_1x1.sqlite")  # połączenie do bazy danych - pliku
     c = conn.cursor()
 
-    cursor = conn.execute('select * from USA_fltper_1x1')
+    cursor = conn.execute('SELECT * from USA_fltper_1x1')
     column_names = list(map(lambda x: x[0], cursor.description))
     # print(column_names)
 
     # data = pd.DataFrame(columns=column_names)
-
+    data = pd.DataFrame()
     female_df = pd.read_sql_query('SELECT * FROM USA_fltper_1x1', conn)
     male_df = pd.read_sql_query('SELECT * FROM USA_mltper_1x1', conn)
 
     data = pd.concat([female_df, male_df], axis=0)
-    print(data)
+    # print(data)
 
     conn.close()
+
+
+    # print(data)
+    return data
+
+
+def zad13(birth_data, death_data):
+    '''
+    Wyznacz przyrost naturalny w analizowanym okresie
+    '''
+    # przyrost naturalny = liczba urodzen - liczba zgonow
+    # stopa przyrostu naturalnego = (liczba urodzen - liczba zgonow)/liczba mieszkancow
+
+    # analizowany okres = 1959-2017
+
+    # print(death_data)
+
+    dff = death_data.groupby(["Year"]).dx.sum().reset_index()
+
+    years = []
+    years = list(dff['Year'])
+    years = [str(int) for int in years]
+    # print(years)
+
+
+    # print(birth_data)
+    birth_data_sum = birth_data.groupby(["Year"]).sum().reset_index()
+    # print(birth_data_sum)
+
+    birth_data_sum = birth_data_sum[birth_data_sum["Year"].isin(years)]
+    birth_data_sum = birth_data_sum.reset_index()
+    # print(birth_data_sum)
+
+    birth_data_sum = birth_data_sum.sum(axis = 1, skipna = True)
+    # birth_data_sum["Sum"] = birth_data_sum[('Number', 'F')] + birth_data_sum[('Number', 'M')]
+
+    # print(birth_data_sum)
+    # print(dff)
+
+    birthrate = []
+
+    for idx , year in enumerate(years):
+        # print(year, birth_data_sum[idx], dff['dx'][idx])
+        birthrate.append((year, birth_data_sum[idx]/dff['dx'][idx]))
+        pass
+
+    print(birthrate)
+
+
+    pass
+
+
+
+
+
+
+
 
 
 
@@ -684,20 +746,20 @@ def zad12():
 
 def main():
     # data = zad1()
-    # data2 = zad1_2()
+    birth_data = zad1_2()
     # zad2(data)
     # zad3(data)
     # zad4(data)
-    # zad4_2(data2)
-    # zad5_2(data2)
-    # zad6_2(data2)
-    # zad7_2(data2)
-    # zad8_2(data2)
-    # zad9_2(data2)
-    # zad10_2(data2)
-    # zad11_2(data2)
-    zad12()
-
+    # zad4_2(birth_data)
+    # zad5_2(birth_data)
+    # zad6_2(birth_data)
+    # zad7_2(birth_data)
+    # zad8_2(birth_data)
+    # zad9_2(birth_data)
+    # zad10_2(birth_data)
+    # zad11_2(birth_data)
+    death_data = zad12()
+    zad13(birth_data, death_data)
 
 if __name__ == '__main__':
     main()
