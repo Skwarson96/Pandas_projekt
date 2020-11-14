@@ -767,14 +767,53 @@ def zad14(birth_data, death_data):
     survival_rate = death_data_mean['qx']
     # print(survival_rate)
 
+    data_dict = zad15(birth_data,death_data)
+
     fig, ax = plt.subplots()
-    ax.plot(years, survival_rate, '-r')
+    ax.plot(survival_rate, '-r')
+    ax.plot(data_dict.values(), '-b')
     plt.show()
 
 
+def zad15(birth_data, death_data):
+    '''
+    Na wykresie z pkt 14 wyznacz współczynnik przeżywalności dzieci w pierwszych 5 latach życia
+    (pamiętaj, że dla roku urodzenia x należy uwzględnić śmiertelność
+     w grupie wiekowej 0 lat w roku x, 1rok w roku x+1 itd).
+    '''
+
+    dff = death_data.groupby(["Year"]).dx.sum().reset_index()
+    years = list(dff['Year'])
+
+    print(death_data)
+
+    death_data_mean = death_data.groupby(['Year', 'Age']).mean().reset_index()
+
+    print(death_data_mean)
+
+    # death_data_mean = death_data_mean[death_data_mean.Age> 5].reset_index()
+
+    print(death_data_mean)
+    data_dict = {}
+
+    data = death_data_mean[['Year', 'Age', 'qx']]
+    print(data)
+
+    for year in years:
+        try:
+            # print(year)
+            data_dict[year] = data.loc[(data['Year'] == year) & (data['Age'] == 0)].values[0][2] + data.loc[(data['Year'] == year+1) & (data['Age'] == 1)].values[0][2] +data.loc[(data['Year'] == year+2) & (data['Age'] == 2)].values[0][2] +data.loc[(data['Year'] == year+3) & (data['Age'] == 3)].values[0][2] +data.loc[(data['Year'] == year+4) & (data['Age'] == 4)].values[0][2]
+            # print(data_dict[year])
+
+        except IndexError:
+            pass
+
+    # fig, ax = plt.subplots()
+    # ax.plot( data_dict.values(), '-b')
+    # plt.show()
 
 
-
+    return data_dict
 
 
 
@@ -797,7 +836,7 @@ def main():
     death_data = zad12()
     # zad13(birth_data, death_data)
     zad14(birth_data, death_data)
-
+    # zad15(birth_data, death_data)
 
 
 
