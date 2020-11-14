@@ -686,7 +686,6 @@ def zad12():
     # print(data)
     return data
 
-
 def zad13(birth_data, death_data):
     '''
     Wyznacz przyrost naturalny w analizowanym okresie
@@ -732,8 +731,54 @@ def zad13(birth_data, death_data):
 
     pass
 
+def zad14(birth_data, death_data):
+    '''
+    Wyznacz i wyświetl współczynnik przeżywalności dzieci w pierwszym roku życia
+    '''
+    print(birth_data)
+    print(death_data)
+
+    dff = death_data.groupby(["Year"]).dx.sum().reset_index()
+
+    years = []
+    years = list(dff['Year'])
+    years = [str(int) for int in years]
+
+    birth_data_sum = birth_data.groupby(["Year"]).sum().reset_index()
+    # print(birth_data_sum)
+
+    birth_data_sum = birth_data_sum[birth_data_sum["Year"].isin(years)]
+    birth_data_sum = birth_data_sum.reset_index()
+    # birth_data_sum.drop('index', inplace=True, axis=1)
+    birth_data_sum.pop("index")
+    print(birth_data_sum)
+
+    death_data_for_0 = death_data[death_data.Age == 0].reset_index()
+    death_data_for_0.pop("index")
+    print(death_data_for_0)
 
 
+    survival_rate_f = []
+    survival_rate_m = []
+    # death_data_for_0.loc[ ,'Year']
+
+    print(death_data_for_0[['Year', 'Sex', 'qx']])
+
+
+    for idx, year in enumerate(years):
+        # if death_data_for_0.loc['Sex'] == 'f' and death_data_for_0.loc['Year'] == year:
+
+        survival_rate_f.append( death_data_for_0.at[idx, 'qx'])
+        survival_rate_m.append( death_data_for_0.at[idx+59, 'qx'])
+        pass
+    # print(survival_rate_f)
+    # print(survival_rate_f[:1])
+
+
+    fig, ax = plt.subplots()
+    ax.plot(years, survival_rate_f, '-r')
+    ax.plot(years, survival_rate_m, '-b')
+    plt.show()
 
 
 
@@ -759,7 +804,11 @@ def main():
     # zad10_2(birth_data)
     # zad11_2(birth_data)
     death_data = zad12()
-    zad13(birth_data, death_data)
+    # zad13(birth_data, death_data)
+    zad14(birth_data, death_data)
+
+
+
 
 if __name__ == '__main__':
     main()
