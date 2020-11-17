@@ -272,6 +272,11 @@ def zad7_2(data):
     special_harry_dict = {}
     special_marilin_dict = {}
 
+    popularity_mary_dict = {}
+    popularity_james_dict = {}
+    popularity_harry_dict = {}
+    popularity_marilin_dict = {}
+
     # print(data.loc[('1880', 'Mary'), ('Number', 'F')])
 
     for year in list_of_years:
@@ -310,22 +315,49 @@ def zad7_2(data):
             except KeyError:
                 special_harry_dict[year] = 0
 
+    # -----------------------------------------------------------------
+    # POPULARNOSC
+
+    data2 = data.groupby(level=0).sum()
+    # print(data2)
+
+
+    for year in list_of_years:
+        try:
+            popularity_mary_dict[year] = data.loc[(str(year), 'Mary'), ('Number', 'F')] / data2.loc[str(year), ('Number', 'F')] * 100
+        except KeyError:
+            popularity_mary_dict[year] = 0
+        try:
+            popularity_marilin_dict[year] = data.loc[(str(year), 'Marilin'), ('Number', 'F')] / data2.loc[str(year), ('Number', 'F')] * 100
+        except KeyError:
+            popularity_marilin_dict[year] = 0
+        try:
+            popularity_james_dict[year] = data.loc[(str(year), 'James'), ('Number', 'M')] / data2.loc[str(year), ('Number', 'M')] * 100
+        except KeyError:
+            popularity_james_dict[year] = 0
+        try:
+            popularity_harry_dict[year] = data.loc[(str(year), 'Harry'), ('Number', 'M')] / data2.loc[str(year), ('Number', 'M')] * 100
+        except KeyError:
+            popularity_harry_dict[year] = 0
+
+
+
     # print(mary_dict)
     # print(marilin_dict)
     # print(james_dict)
     # print(harry_dict)
     #
-    # print(special_mary_dict)
-    # print(special_marilin_dict)
-    # print(special_james_dict)
-    # print(special_harry_dict)
+    print('special_mary_dict', special_mary_dict)
+    print('special_marilin_dict', special_marilin_dict)
+    print('special_james_dict', special_james_dict)
+    print('special_harry_dict', special_harry_dict)
 
     fig, ax1 = plt.subplots()
     ax1.plot(list_of_years, mary_dict.values(), '-r')
     ax1.plot(list_of_years, marilin_dict.values(), '-b')
     ax1.plot(list_of_years, james_dict.values(), '-k')
     ax1.plot(list_of_years, harry_dict.values(), '-g')
-    ax1.legend(['Mary', 'Marilin', 'James', 'Harry'])
+    ax1.legend(['Mary', 'Marilin', 'James', 'Harry'], loc='upper left')
     # print(special_mary_dict.keys())
     # print(type(special_mary_dict.keys()))
     ax1.plot(list(special_mary_dict.keys()), list(special_mary_dict.values()), 'or')
@@ -334,11 +366,18 @@ def zad7_2(data):
     ax1.plot(list(special_harry_dict.keys()), list(special_harry_dict.values()), 'og')
 
     ax2 = ax1.twinx()
-    ax2.plot(special_years, special_mary_dict.values(), '--r')
-    ax2.plot(special_years, special_marilin_dict.values(), '--b')
-    ax2.plot(special_years, special_james_dict.values(), '--k')
-    ax2.plot(special_years, special_harry_dict.values(), '--g')
-    ax2.legend(['Mary%', 'Marilin%', 'James%', 'Harry%'])
+    ax2.plot(list_of_years, popularity_mary_dict.values(), '--r')
+    ax2.plot(list_of_years, popularity_marilin_dict.values(), '--b')
+    ax2.plot(list_of_years, popularity_james_dict.values(), '--k')
+    ax2.plot(list_of_years, popularity_harry_dict.values(), '--g')
+    ax2.legend(['Mary%', 'Marilin%', 'James%', 'Harry%'], loc='upper right')
+
+
+    ax1.set_title("Zadanie 7")
+    ax1.set_xlabel("Rok")
+    ax1.set_ylabel("Liczba nadanych imion")
+    ax2.set_ylabel("Popularność imienia [%]")
+
     plt.show()
 
 def zad8_2(data):
@@ -828,14 +867,14 @@ def main():
     # zad4_2(birth_data)
     # zad5_2(birth_data)
     # zad6_2(birth_data)
-    # zad7_2(birth_data)
+    zad7_2(birth_data)
     # zad8_2(birth_data)
     # zad9_2(birth_data)
     # zad10_2(birth_data)
     # zad11_2(birth_data)
-    death_data = zad12()
+    # death_data = zad12()
     # zad13(birth_data, death_data)
-    zad14(birth_data, death_data)
+    # zad14(birth_data, death_data)
     # zad15(birth_data, death_data)
 
 
