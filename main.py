@@ -391,8 +391,8 @@ def zad8_2(data):
     top_female_ = top_female(data)
     top_male_ = top_male(data)
     # print(type(top_female_))
-    # print(top_female_)
-    # print(top_male_)
+    print('top_female_', top_female_)
+    print('top_male_', top_male_)
 
     sum_of_female_names_from_top1000 = 0
     dict_female_top1000 = {}
@@ -444,13 +444,22 @@ def zad8_2(data):
 
     female_ratio = []
     male_ratio = []
+    difference = {}
+
     for year in list_of_years:
         female_ratio.append(dict_female_top1000[year] / dict_female_all[year])
         male_ratio.append(dict_male_top1000[year] / dict_male_all[year])
+        difference[year] = abs((dict_female_top1000[year] / dict_female_all[year]) - (dict_male_top1000[year] / dict_male_all[year]))
+
+    # print(difference)
+    print("Rok z najwieksza roznica:", max(difference, key=difference.get))
+
 
     fig, ax = plt.subplots()
     ax.plot(list_of_years, female_ratio, '-r')
     ax.plot(list_of_years, male_ratio, '-b')
+
+    ax.legend(['female_ratio', 'male_ratio'], loc='upper right')
     plt.show()
     pass
 
@@ -467,12 +476,10 @@ def zad9_2(data):
      - Dla 3 liter dla których zaobserwowano największą zmianę wyświetl przebieg trendu popularności w czasie
     '''
 
-    print("???")
+    # print("???")
     print(data)
     list_of_years = list(range(1880, 2020))
     special_years = ['1910', '1960', '2015']
-
-
 
     # data2 = data.unstack('Name')
     data2 = data.reset_index()
@@ -487,188 +494,107 @@ def zad9_2(data):
     del data2['Year']
     del data2['Name']
     print(data2)
-    print(special_years[0])
+    # print(special_years[0])
     data_1910 = data2.loc[special_years[0]]
     data_1960 = data2.loc[special_years[1]]
     data_2015 = data2.loc[special_years[2]]
+    print('data_1910', data_1910)
     data_1910_F_sum = data_1910.loc[:, ("Number",'F')].sum()
-    data_1910_M_sum = data_1910.loc[:, ("Number",'F')].sum()
+    data_1910_M_sum = data_1910.loc[:, ("Number",'M')].sum()
+    # print('data_1910_F_sum', data_1910_F_sum)
+    # print('data_1910_M_sum', data_1910_M_sum)
     data_1910[("Number", "F")] = data_1910[("Number", "F")]/ data_1910_F_sum
     data_1910[("Number", "M")] = data_1910[("Number", "M")] / data_1910_M_sum
 
     data_1960_F_sum = data_1960.loc[:, ("Number",'F')].sum()
-    data_1960_M_sum = data_1960.loc[:, ("Number",'F')].sum()
+    data_1960_M_sum = data_1960.loc[:, ("Number",'M')].sum()
     data_1960[("Number", "F")] = data_1960[("Number", "F")]/ data_1960_F_sum
     data_1960[("Number", "M")] = data_1960[("Number", "M")] / data_1960_M_sum
 
     data_2015_F_sum = data_2015.loc[:, ("Number",'F')].sum()
-    data_2015_M_sum = data_2015.loc[:, ("Number",'F')].sum()
+    data_2015_M_sum = data_2015.loc[:, ("Number",'M')].sum()
     data_2015[("Number", "F")] = data_2015[("Number", "F")]/ data_2015_F_sum
     data_2015[("Number", "M")] = data_2015[("Number", "M")] / data_2015_M_sum
 
-    print(data_1910)
-    print(data_1960)
-    print(data_2015)
+    print('data_1910', data_1910)
+    # print('sum data 1910 M', data_1910.loc[:, ("Number",'M')].sum())
+    # print(data_1960)
+    # print(data_2015)
+
+    data_1910.loc['q', [("Number", "F"), ("Number", "M")]] = (0, 0)
+    data_1910.loc['j', [("Number", "F"), ("Number", "M")]] = (0, 0)
+    data_1910.sort_index(inplace=True)
+    # labels = list(data_1910.loc[:,("Number", "F")].index.values)
+    # print('labels', labels)
+    # print(len(labels))
+
+    data_1960.loc['q', [("Number", "F"), ("Number", "M")]] = (0, 0)
+    data_1960.loc['j', [("Number", "F"), ("Number", "M")]] = (0, 0)
+    data_1960.sort_index(inplace=True)
+    # print(data_1960)
+
+    # labels = list(data_1960.loc[:,("Number", "F")].index.values)
+    # print('labels', labels)
+    # print(len(labels))
+
+    labels = list(data_2015.loc[:,("Number", "F")].index.values)
+    # print('labels', labels)
+    # print(len(labels))
+
+
+    # print('data_1910.loc[:,("Number", "F")]', data_1910.loc[:,("Number", "F")])
+    # print('data_1910.loc[:,("Number", "M")]', data_1910.loc[:,("Number", "M")])
+    # print(type(data_1910.loc[:,("Number", "M")]))
+    # print(data_1910.loc[:,("Number", "M")].values)
+    # print(data_1910.loc[:,("Number", "M")].values*100)
+    # F_list = list(data_1910.loc[:,("Number", "F")].values *100)
+    # M_list = list(data_1910.loc[:,("Number", "M")].values *100)
+
+    # print(F_list)
+    # print('len F list', len(F_list))
+    # print('len labels', len(labels))
+
 
     fig, ax = plt.subplots()
-    x = np.arange(len(data_1910.loc[:,("Number", "F")]))
-    print(x)
-    width = 0.3
-    ax.bar(x - width / 2, data_1910.loc[:,("Number", "F")], width, label='1910 F')
-    ax.bar(x + width / 2, data_1910.loc[:,("Number", "M")], width, label='1910 M')
-    # ax.bar(x + width / 2, values2, width, label='Value 2')
+    x = np.arange(len(labels))
 
+    barWidth = 0.1
+    r1 = np.arange(len(labels))
+    print(r1)
+    r2 = [a + barWidth for a in r1]
+    print(r2)
+    r3 = [a + barWidth for a in r2]
+    print(r3)
+    r4 = [a + barWidth for a in r3]
+    print(r4)
+    r5 = [a + barWidth for a in r4]
+    print(r5)
+    r6 = [a + barWidth for a in r5]
+    print(r6)
 
-    # print(data_1910["Name"])
-    labels = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
-    ax.set_xticklabels(labels)
+    ax.bar(r1, data_1910.loc[:,("Number", "F")].values *100, barWidth, label='1910 F')
+    ax.bar(r2, data_1910.loc[:,("Number", "M")].values *100, barWidth, label='1910 M')
 
+    ax.bar(r3, data_1960.loc[:,("Number", "F")].values *100, barWidth, label='1960 F')
+    ax.bar(r4, data_1960.loc[:,("Number", "M")].values *100, barWidth, label='1960 M')
+
+    ax.bar(r5, data_2015.loc[:,("Number", "F")].values *100, barWidth, label='2015 F')
+    ax.bar(r6, data_2015.loc[:,("Number", "M")].values *100, barWidth, label='2015 M')
+
+    ax.set_title('Zadanie 9')
+    # ax.set_xticks(x)
+    # ax.set_xticklabels(labels)
+    plt.xticks([r + barWidth for r in range(len(labels))], labels)
+    ax.set_ylabel('%')
+    ax.legend()
 
     plt.show()
-    # print(data2.loc['Name'])
-
-    # female_last_letters = []
-    # list_of_names = data.index.get_level_values('Name')[:-1].to_list()
-    # list_of_names = data.index.get_level_values('Name')
-    #
-    # print(list_of_names)
-    # data['Name'] = data['Name'].str.strip().str[-1]
-    # print(data)
-
-
-
-
-
-
-
-
-    # print(data.groupby(level=0).sum())
-
-    # data2 = pd.crosstab(data['Year'], [data['Sex'], data['Name']])
-    # print(data2)
-
-
-
-    # codes, uniques = pd.factorize(data)
-    # print(codes)
-    # print(uniques)
-
-    # list_of_names = list_of_names[-1]
-    # print(list_of_names)
-    # # print(type(data))
-    #
-    # print(data.index.get_level_values(0))
-    # print(data.index.get_level_values(1))
-
-    # data['Name'] = data['Name'].str.strip().str[-1]
-    # print(data)
-    # print(data.groupby('Name').sum())
-    # print(data)
-    # data2 = data.pivot(index=['Year', 'Name'], columns=['Sex'], values=['Number'])
-    # print(data2)
-    # data2 = pd.crosstab(data['Year'], [data['Sex'], data['Name']])
-    # print(data2)
-    # print(data2.loc['1910'])
-    # sum = data2.loc['1910'].groupby(level=0).sum()
-    # print(sum[0], sum[1])
-    # print(data2.loc['1910']/sum[0])
-
-
-
-    # print(data2.loc['1960'])
-    # print(data2.loc['2015'])
-
-
-
-
-    # print(data.index[:])
-    # s = pd.Series()
-    # print(data.index[:0].get_level_values(0))
-    # print(data.index[:1])
-    # print(data.index['Year'])
-    # # print(data.index['Year'])
-    # print(data.index[0][0])
-    # print(data.index[0][1])
-    # print(data.index[1])
-    # print(data.loc[('1880', data.index[0][1]), ('Number', 'F')])
-    # print(data.loc['1880'])
-    # print(np.shape(data.loc['1880']))
-    # print(data.loc['1881'])
-    # print(np.shape(data.loc['1881']))
-    # print(data.index)
-    # print(type(data.index))
-    # print(data.loc['1880'].index)
-    # print(data.loc['Year'].index)
-
-    # print(pd.crosstab(a, [b, c], rownames=['a'], colnames=['b', 'c']))
-    # print(pd.crosstab(list_of_years, [ , ], rownames=['Year'], colnames=['Sex', 'Last letter']))
-    # data2 = data.groupby(data.ID.str[:-1])['Name'].sum()
-    # print(data2)
-
-    # df=pd.DataFrame(data=[['AA',1],['AB',4],['AC',5],['BA',11],['BB',2],['CA',9]], columns=['ID','Value'])
-    # print(df)
-
-    # print("df.index:", df.index)
-    # print('df[ID]', df['ID'])
-    # print(df.groupby(df.ID.str[:1])['Value'].sum())
-    # print(data.groupby(data.index.get_level_values(1).str[0])[('Sex', 'F')].sum())
 
 def zad10_2(data):
     '''
     Znajdź imiona, które nadawane były zarówno dziewczynkom jak i chłopcom
     (zanotuj najpopularniejsze imię męskie i żeńskie)
     '''
-    # print(data)
-
-    # list_of_years = list(range(1880, 2020))
-    # dubble_sex_names = {}
-
-    # print(data.index[0])
-    # print(data.index[0][0])
-    # print(data.index[0][1])
-    # print(data.index[1])
-    # print(data.loc[('1880', data.index[0][1]), ('Number', 'F')])
-    # print(data.loc['1880'])
-    # print(np.shape(data.loc['1880']))
-    # print(data.loc['1881'])
-    # print(np.shape(data.loc['1881']))
-    # print(data.index)
-    # print(type(data.index))
-    # for year in list_of_years:
-    #     print(year)
-    #     print("shape:", np.shape(data.loc[str(year)])[0])
-    #     for idx in range(np.shape(data)[0]):
-    #         if data.index[idx][0] == str(year):
-    #             # pass
-    #             # print(idx)
-    #             print(data.index[idx][1])
-    #             if pd.isna(data.loc[(str(year), data.index[idx][1]), ('Number', 'F')]) or pd.isna(data.loc[(str(year), data.index[idx][1]), ('Number', 'M')]):
-    #                 # print("Nan")
-    #                 pass
-    #             else:
-    #                 print("Name:", data.index[idx][1], "Q:", data.loc[(str(year), data.index[idx][1]), ('Number', 'F')])
-
-    # data2 = data.sum(axis=1)
-    # print(data2)
-    # print(data2.loc[])
-    # for idx in range(np.shape(data2)[0]):
-    #     # pass
-    #     # print(idx)
-    #     print(data2.index[idx][0])
-    #     if pd.isna(data.loc[(data.index[idx][0], data.index[idx][1]), ('Number', 'F')]) or pd.isna(data.loc[(data.index[idx][0], data.index[idx][1]), ('Number', 'M')]):
-    #         # print("Nan")
-    #         pass
-    #     else:
-    #         try:
-    #             # print("Name:", data.index[idx][1], "Q:", data.loc[(data.index[idx][0], data.index[idx][1]), ('Number', 'F')] + data.loc[(data.index[idx][0], data.index[idx][1]), ('Number', 'M')])
-    #             sum = data.loc[(data.index[idx][0], data.index[idx][1]), ('Number', 'F')] + data.loc[(data.index[idx][0], data.index[idx][1]), ('Number', 'M')]
-    #             dubble_sex_names[data.index[idx][1]] = dubble_sex_names[data.index[idx][1]] + sum
-    #         except KeyError:
-    #             pass
-    #
-    # print(dubble_sex_names)
-    # sort_ = sorted(dubble_sex_names.items(), key=lambda x: x[1], reverse=True)
-    # print(sort_[10])
 
     data2 = data.dropna()
     # print(data2)
@@ -867,9 +793,9 @@ def main():
     # zad4_2(birth_data)
     # zad5_2(birth_data)
     # zad6_2(birth_data)
-    zad7_2(birth_data)
+    # zad7_2(birth_data)
     # zad8_2(birth_data)
-    # zad9_2(birth_data)
+    zad9_2(birth_data)
     # zad10_2(birth_data)
     # zad11_2(birth_data)
     # death_data = zad12()
