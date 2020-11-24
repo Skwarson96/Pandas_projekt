@@ -19,7 +19,7 @@ def zad1_2():
     df = pd.DataFrame(columns=columns)
 
     for name_of_file in list_of_txt_files:
-        print(name_of_file)
+        # print(name_of_file)
         df1 = pd.DataFrame(pd.read_csv(name_of_file, sep=',', header=None))
         df1 = df1.rename(columns={0:"Name", 1:"Sex", 2:"Number"})
         # df1["Year"] = str(name_of_file[3:7])
@@ -28,14 +28,15 @@ def zad1_2():
         # print(type(df))
         df = df.append(df1)
     data2 = df.pivot(index=['Year', 'Name'], columns=['Sex'], values=['Number'])
-    print(data2)
+    # print(data2)
     return data2
     # return df
 
 def zad2_2(data):
     ''' Określi ile różnych (unikalnych) imion zostało nadanych w tym czasie. '''
     data2 = data.groupby(level=1).sum()
-    print(data2)
+    # print(data2)
+    print("Zadanie 2")
     print('Ilosc nadanych unikalnych imion w pelnym okresie:',data2.shape[0])
     # 99444
 
@@ -51,7 +52,7 @@ def zad3_2(data):
     data_male = data_male.dropna()
     data_male = data_male.groupby(level=1).sum()
     # print(data_male)
-
+    print("Zadanie 3")
     print('Ilosc unikalnych kobiecych imion:', data_female.shape[0])
     # 68332
     print('Ilosc unikalnych meskich imion:', data_male.shape[0])
@@ -66,6 +67,7 @@ def zad4_2(data):
     data_zad4 = data.copy()
     data_zad4['Number','frequency_female'] = data.loc[:,('Number', 'F')]/data2.loc[:,('Number', 'F')]
     data_zad4['Number', 'frequency_male'] = data.loc[:,('Number', 'M')]/data2.loc[:,('Number', 'M')]
+    print("Zadanie 4")
     print(data_zad4)
 
 def zad5_2(data):
@@ -86,6 +88,7 @@ def zad5_2(data):
         quantity_of_birth[year] = (data2.loc[str(year),('Number', 'F')] + data2.loc[str(year),('Number', 'M')])
         ratio[year] = (data2.loc[str(year),('Number', 'F')].astype(float) / data2.loc[str(year),('Number', 'M')].astype(float))
 
+    print("Zadanie 5")
     print("Najwieksza roznica: ", max(ratio, key=ratio.get))
     print("Najmniejsza roznica: ", min(ratio, key=ratio.get))
 
@@ -101,7 +104,7 @@ def zad5_2(data):
     ax[1].plot(list_of_years, ratio.values(), '-b')
     ax[1].set_xlabel('Rok')
     ax[1].set_ylabel('Stosunek\n liczby narodzin dziewczynek\n do liczby narodzin chłopców')
-    plt.show()
+    # plt.show()
 
 def top_female(data):
     most_female_for_year = []
@@ -186,11 +189,14 @@ def zad6_2(data):
     '''Wyznacz 1000 najpopularniejszych imion dla każdej płci w całym zakresie czasowym,
      metoda powinna polegać na wyznaczeniu 1000 najpopularniejszych imion dla każdego roku i dla każdej płci a
      następnie ich zsumowaniu w celu ustalenia rankingu top 1000 dla każdej płci.'''
+    print("Zadanie 6")
     print("Top female names:")
-    print(top_female(data))
+    top_female_df = pd.DataFrame(top_female(data))
+    print(top_female_df)
     # ('Mary', 4128052)
     print("Top male names:")
-    print(top_male(data))
+    top_male_df = pd.DataFrame(top_male(data))
+    print(top_male_df)
     # ('James', 5177716)
 
 def zad7_2(data):
@@ -285,11 +291,11 @@ def zad7_2(data):
     # print(marilin_dict)
     # print(james_dict)
     # print(harry_dict)
-
-    print('special_mary_dict', special_mary_dict)
-    print('special_marilin_dict', special_marilin_dict)
-    print('special_james_dict', special_james_dict)
-    print('special_harry_dict', special_harry_dict)
+    print("Zadanie 7:")
+    print('Mary', special_mary_dict)
+    print('Marilin', special_marilin_dict)
+    print('James', special_james_dict)
+    print('Harry', special_harry_dict)
 
     fig, ax1 = plt.subplots()
     ax1.plot(list_of_years, mary_dict.values(), '-r')
@@ -316,7 +322,7 @@ def zad7_2(data):
     ax1.set_ylabel("Liczba nadanych imion")
     ax2.set_ylabel("Popularność imienia [%]")
 
-    plt.show()
+    # plt.show()
 
     # special_mary_dict {1940: 56206, 1980: 11475, 2019: 2209}
     # special_marilin_dict {1940: 0, 1980: 6, 2019: 7}
@@ -334,8 +340,8 @@ def zad8_2(data):
     top_female_ = top_female(data)
     top_male_ = top_male(data)
     # print(type(top_female_))
-    print('top_female_', top_female_)
-    print('top_male_', top_male_)
+    # print('top_female_', top_female_)
+    # print('top_male_', top_male_)
 
     sum_of_female_names_from_top1000 = 0
     dict_female_top1000 = {}
@@ -403,6 +409,7 @@ def zad8_2(data):
         difference[year] = abs((dict_female_top1000[year] / dict_female_all[year]) - (dict_male_top1000[year] / dict_male_all[year]))
 
     # print(difference)
+    print("Zadanie 8")
     print("Rok z najwieksza roznica:", max(difference, key=difference.get))
     # Rok z najwieksza roznica: 1889
 
@@ -413,7 +420,7 @@ def zad8_2(data):
     ax.set_xlabel("Rok")
     ax.set_ylabel("Procent w danym roku stanowiły imiona należące do rankingu top1000 [%]")
     ax.legend(['female_ratio [%]', 'male_ratio [%]'], loc='upper right')
-    plt.show()
+    # plt.show()
     pass
 
 def zad9_2(data):
@@ -455,10 +462,8 @@ def zad9_2(data):
     # print(male_last_letters_df2)
     # print(male_last_letters_df2.sum())
 
-
     labels = male_last_letters_df2.index.tolist()
     # print(labels)
-
 
     fig, ax = plt.subplots()
     x = np.arange(len(labels))
@@ -476,16 +481,16 @@ def zad9_2(data):
 
     # plt.show()
 
-
     male_last_letters_df2['abs (2015 - 1910)'] = abs(male_last_letters_df2['2015 normalize'] - male_last_letters_df2['1910 normalize'])
     # print(male_last_letters_df2)
     column = male_last_letters_df2['abs (2015 - 1910)']
     max_index = column.idxmax()
-    print('Zadanie 9 litera dla ktorej wystapil najwiekszy wzrost/spadek:',max_index)
+    print("Zadanie 9")
+    print('Litera dla ktorej wystapil najwiekszy wzrost/spadek:',max_index)
 
     letters_with_biggest_changes = male_last_letters_df2['abs (2015 - 1910)'].nlargest(3).index.tolist()
-    print(letters_with_biggest_changes)
-    print(last_letters_df)
+    # print(letters_with_biggest_changes)
+    # print(last_letters_df)
 
     # data = data[(data.Age == 0) | (data.Age == 1) | (data.Age == 2) | (data.Age == 3) | (data.Age == 4)]
     biggest_changes_df = last_letters_df.copy()
@@ -500,7 +505,7 @@ def zad9_2(data):
                                                         biggest_changes_df.Name == letters_with_biggest_changes[2])]
 
     biggest_changes_df = biggest_changes_df.pivot(index=['Year'], columns=['Name'], values=['Number'])
-    print(biggest_changes_df)
+    # print(biggest_changes_df)
 
 
     labels = biggest_changes_df[('Number', letters_with_biggest_changes[0])].index.tolist()
@@ -518,7 +523,7 @@ def zad9_2(data):
     plt.xticks(ticks=x, labels=labels)
 
     ax.legend([letters_with_biggest_changes[0], letters_with_biggest_changes[1], letters_with_biggest_changes[2]], loc='upper right')
-    plt.show()
+    # plt.show()
 
 
 def zad10_2(data):
@@ -536,7 +541,7 @@ def zad10_2(data):
     data2 = data2.sort_values()
     # print(data2)
 
-    print('Najpopularniejsze imie nadawane chlopcom i dziewczynka:',data2.index[-1])
+    print('Zadanie 10. Najpopularniejsze imie nadawane chlopcom i dziewczynka:',data2.index[-1])
     # Najpopularniejsze imie nadawane chlopcom i dziewczynka: James
 
 def zad11_2(data):
@@ -549,7 +554,7 @@ def zad11_2(data):
       zmiana jest największa (zanotuj dwa najpopularniejsze imiona)
      - wkreśl przebieg trendu dla tych imion
     '''
-
+    list_of_years = list(range(1880, 2020))
     print(data)
 
     data = data.dropna()
@@ -565,16 +570,46 @@ def zad11_2(data):
     data_zad11['Number', 'popularity'] = data_zad11.loc[:,('Number', 'frequency_male')]/(data_zad11.loc[:,('Number', 'frequency_male')] + data_zad11.loc[:,('Number', 'frequency_female')])
     print(data_zad11)
 
-    #
-    # print(data2)
-    #     data_zad4['Number','frequency_female'] = data.loc[:,('Number', 'F')]/data2.loc[:,('Number', 'F')]
-    # data2['Number', 'F/M'] = data2.loc[:,('Number', 'F')]/data2.loc[:,('Number', 'M')]
-    # print(data2)
+    female_male_names_df = data_zad11.drop(data_zad11[(data_zad11.Number.popularity < 0.3) & (data_zad11.Number.popularity > 0.7)].index)
+    # print(female_male_names_df)
 
+    # del female_male_names_df['frequency_female']
+    # del female_male_names_df['frequency_male']
+    # del female_male_names_df['popularity']
 
+    print(female_male_names_df)
+    # female_male_names_df = female_male_names_df.reset_index()
+    # print(female_male_names_df)
 
+    list_of_years_to_delete = list(range(1921, 2020))
+    list_of_years_to_delete = [str(int) for int in list_of_years_to_delete]
+    data_1880_1920 = female_male_names_df.drop(list_of_years_to_delete)
+    # print(data_1880_1920)
 
+    list_of_years_to_delete = list(range(1880, 2000))
+    list_of_years_to_delete = [str(int) for int in list_of_years_to_delete]
+    data_2000_2020 = female_male_names_df.drop(list_of_years_to_delete)
+    # print(data_2000_2020)
 
+    # data_1880_1920 = data_1880_1920.reset_index()
+    # data_2000_2020 = data_2000_2020.reset_index()
+
+    data_1880_1920_sum = data_1880_1920.groupby(level=0).sum()
+    data_2000_2020_sum = data_2000_2020.groupby(level=0).sum()
+
+    print(data_1880_1920_sum)
+    print(data_2000_2020_sum)
+
+    data_1880_1920 = data_1880_1920.groupby(level="Name").sum()
+    data_2000_2020 = data_2000_2020.groupby(level="Name").sum()
+
+    print(data_1880_1920)
+    print(data_2000_2020)
+
+    data_1880_1920['Number','frequency_female'] = data_1880_1920.loc[:,('Number', 'F')]/data_1880_1920_sum.loc[:,('Number', 'F')]
+    # data_zad11['Number', 'frequency_male'] = data.loc[:,('Number', 'M')]/data2.loc[:,('Number', 'M')]
+
+    print(data_1880_1920)
 
 def zad12():
     '''
@@ -588,9 +623,7 @@ def zad12():
 
     cursor = conn.execute('SELECT * from USA_fltper_1x1')
     column_names = list(map(lambda x: x[0], cursor.description))
-    # print(column_names)
 
-    # data = pd.DataFrame(columns=column_names)
     data = pd.DataFrame()
     female_df = pd.read_sql_query('SELECT * FROM USA_fltper_1x1', conn)
     male_df = pd.read_sql_query('SELECT * FROM USA_mltper_1x1', conn)
@@ -599,7 +632,6 @@ def zad12():
     # print(data)
 
     conn.close()
-
 
     # print(data)
     return data
@@ -615,9 +647,6 @@ def zad13(birth_data, death_data):
 
     # print(death_data)
     dff = death_data.groupby(["Year"]).dx.sum().reset_index()
-    # dff = death_data.groupby(["Year"]).dx.mean()
-    # print(dff)
-
 
     years = []
     years = list(dff['Year'])
@@ -632,19 +661,13 @@ def zad13(birth_data, death_data):
     # zostawienie interesujących lat 1959-2017
     birth_data_sum = birth_data_sum[birth_data_sum["Year"].isin(years)]
     birth_data_sum = birth_data_sum.reset_index()
-    # print(birth_data_sum)
 
     birth_data_sum = birth_data_sum.sum(axis = 1, skipna = True)
-    # print(birth_data_sum)
-    # birth_data_sum["Sum"] = birth_data_sum[('Number', 'F')] + birth_data_sum[('Number', 'M')]
-    # print(birth_data_sum)
-
-    # print(dff)
 
     birthrate = {}
 
     for idx , year in enumerate(years):
-        print(year, birth_data_sum[idx], dff['dx'][idx])
+        # print(year, birth_data_sum[idx], dff['dx'][idx])
         birthrate[year] = int(birth_data_sum[idx]-dff['dx'][idx])
         pass
 
@@ -653,7 +676,7 @@ def zad13(birth_data, death_data):
     ax.plot(birthrate.keys(), birthrate.values(), '-r')
     # ax.set_xticklabels([1959, 2017, step=10])
     ax.set_title("Zadanie 13")
-    plt.show()
+    # plt.show()
 
 def zad14(birth_data, death_data):
     '''
@@ -714,6 +737,7 @@ def zad14(birth_data, death_data):
     # ax.legend()
     plt.grid(True)
     ax.set_title("Zadanie 14, 15")
+    ax.legend(['przezywalnosc', 'przezywalnosc_5l'], loc='upper right')
     plt.show()
 
 def zad15(birth_data, death_data):
@@ -758,20 +782,20 @@ def zad15(birth_data, death_data):
 
 def main():
     birth_data = zad1_2()
-    # zad2_2(birth_data)
-    # zad3_2(birth_data)
-    # zad4_2(birth_data)
-    # zad5_2(birth_data)
-    # zad6_2(birth_data)
-    # zad7_2(birth_data)
-    # zad8_2(birth_data)
-    # zad9_2(birth_data)
-    # zad10_2(birth_data)
-    zad11_2(birth_data)
-    # death_data = zad12()
-    # zad13(birth_data, death_data)
-    # zad14(birth_data, death_data)
-    # zad15(birth_data, death_data)
+    zad2_2(birth_data)
+    zad3_2(birth_data)
+    zad4_2(birth_data)
+    zad5_2(birth_data)
+    zad6_2(birth_data)
+    zad7_2(birth_data)
+    zad8_2(birth_data)
+    zad9_2(birth_data)
+    zad10_2(birth_data)
+    # zad11_2(birth_data)
+    death_data = zad12()
+    zad13(birth_data, death_data)
+    zad14(birth_data, death_data)
+    zad15(birth_data, death_data)
 
 
 
