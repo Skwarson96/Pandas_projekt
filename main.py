@@ -6,7 +6,7 @@ import glob
 import sqlite3
 from pandas import DataFrame
 import operator
-
+import math
 
 def zad1():
     ''' Wczytaj dane ze wszystkich plików do pojedynczej tablicy (używając Pandas). '''
@@ -191,7 +191,10 @@ def top_female(data):
         list1 = female_sort_data2.loc[(str(year)), ('Number', 'F')].tolist()
         # print(list1)
         top_year_list_dict = dict(zip(most_female_for_year, list1))
-        # print(top_year_list_dict)
+
+
+        # top_year_list_dict = {k: top_year_list_dict[k] for k in top_year_list_dict if not math.isnan(top_year_list_dict[k])}
+
 
         for key, value in top_year_list_dict.items():
             if key in top_all.keys():
@@ -412,18 +415,24 @@ def zad8_2(data):
 
 
     for year in list_of_years:
-        # print("YEAR", year)
+        # if year == 1880:
+        #     print("YEAR", year)
         for name, q in top_female_:
             try:
-                # print(name)
-                # print(data.loc[(str(year), name), ('Number', 'F')])
+                # if year == 1880:
+                #     print(name)
+                #     print(data.loc[(str(year), name), ('Number', 'F')])
                 if pd.isna(data.loc[(str(year), name), ('Number', 'F')]):
                     pass
                 else:
                     sum_of_female_names_from_top1000 = sum_of_female_names_from_top1000 + data.loc[(str(year), name), ('Number', 'F')]
-                    # print(sum_of_female_names_from_top1000)
+                    # if year == 1880:
+                    #     print(sum_of_female_names_from_top1000)
             except KeyError:
                 pass
+
+        dict_female_top1000[year] = sum_of_female_names_from_top1000
+        sum_of_female_names_from_top1000 = 0
         # -----------------------
         for name, q in top_male_:
             try:
@@ -435,20 +444,22 @@ def zad8_2(data):
                 pass
 
         # print("YEAR SUM",sum_of_female_names_from_top1000)
-        dict_female_top1000[year] = sum_of_female_names_from_top1000
         dict_male_top1000[year] = sum_of_male_names_from_top1000
-        sum_of_female_names_from_top1000 = 0
         sum_of_male_names_from_top1000 = 0
-    # print(dict_female_top1000)
-    # print(dict_female_all)
+
+
+    # print('dict_female_top1000',dict_female_top1000)
+    # print('dict_female_all', dict_female_all)
+    # print('dict_male_top1000', dict_male_top1000)
+    # print('dict_male_all', dict_male_all)
 
     female_ratio = []
     male_ratio = []
     difference = {}
 
     for year in list_of_years:
-        female_ratio.append(dict_female_top1000[year] / dict_female_all[year])
-        male_ratio.append(dict_male_top1000[year] / dict_male_all[year])
+        female_ratio.append(dict_female_top1000[year] / dict_female_all[year] * 100)
+        male_ratio.append(dict_male_top1000[year] / dict_male_all[year] * 100)
         difference[year] = abs((dict_female_top1000[year] / dict_female_all[year]) - (dict_male_top1000[year] / dict_male_all[year]))
 
     # print(difference)
@@ -459,7 +470,7 @@ def zad8_2(data):
     ax.plot(list_of_years, female_ratio, '-r')
     ax.plot(list_of_years, male_ratio, '-b')
 
-    ax.legend(['female_ratio', 'male_ratio'], loc='upper right')
+    ax.legend(['female_ratio [%]', 'male_ratio [%]'], loc='upper right')
     plt.show()
     pass
 
@@ -661,40 +672,46 @@ def zad13(birth_data, death_data):
     # analizowany okres = 1959-2017
 
     # print(death_data)
-
     dff = death_data.groupby(["Year"]).dx.sum().reset_index()
+    # dff = death_data.groupby(["Year"]).dx.mean()
+    # print(dff)
+
 
     years = []
     years = list(dff['Year'])
     years = [str(int) for int in years]
     # print(years)
 
-
+    # suma urodzen dla kazdej plci w kazdym roku
     # print(birth_data)
     birth_data_sum = birth_data.groupby(["Year"]).sum().reset_index()
     # print(birth_data_sum)
 
+    # zostawienie interesujących lat 1959-2017
     birth_data_sum = birth_data_sum[birth_data_sum["Year"].isin(years)]
     birth_data_sum = birth_data_sum.reset_index()
     # print(birth_data_sum)
 
     birth_data_sum = birth_data_sum.sum(axis = 1, skipna = True)
-    # birth_data_sum["Sum"] = birth_data_sum[('Number', 'F')] + birth_data_sum[('Number', 'M')]
-
     # print(birth_data_sum)
+    # birth_data_sum["Sum"] = birth_data_sum[('Number', 'F')] + birth_data_sum[('Number', 'M')]
+    # print(birth_data_sum)
+
     # print(dff)
 
-    birthrate = []
+    birthrate = {}
 
     for idx , year in enumerate(years):
-        # print(year, birth_data_sum[idx], dff['dx'][idx])
-        birthrate.append((year, birth_data_sum[idx]/dff['dx'][idx]))
+        print(year, birth_data_sum[idx], dff['dx'][idx])
+        birthrate[year] = int(birth_data_sum[idx]-dff['dx'][idx])
         pass
 
-    print(birthrate)
-
-
-    pass
+    # print(birthrate)
+    fig, ax = plt.subplots()
+    ax.plot(birthrate.keys(), birthrate.values(), '-r')
+    # ax.set_xticklabels([1959, 2017, step=10])
+    ax.set_title("Zadanie 13")
+    plt.show()
 
 def zad14(birth_data, death_data):
     '''
@@ -704,39 +721,57 @@ def zad14(birth_data, death_data):
     # print(death_data)
 
     dff = death_data.groupby(["Year"]).dx.sum().reset_index()
-
+    # print(dff)
     years = []
     years = list(dff['Year'])
-
+    years = [str(int) for int in years]
 
     birth_data_sum = birth_data.groupby(["Year"]).sum().reset_index()
     # print(birth_data_sum)
 
+
     birth_data_sum = birth_data_sum[birth_data_sum["Year"].isin(years)]
+    # print(birth_data_sum)
     birth_data_sum = birth_data_sum.reset_index()
-    # birth_data_sum.drop('index', inplace=True, axis=1)
+    # print(birth_data_sum)
+
     birth_data_sum.pop("index")
+    # print(birth_data_sum)
+    # birth_data_sum = birth_data_sum.pivot(birth_data_sum, values=[('Number','F'), ('Number','M')], rows=['Year'], cols=['Number'], aggfunc=np.sum, margins=True)
+    birth_data_sum['Sum'] = birth_data_sum[('Number','F')] + birth_data_sum[('Number','M')]
     # print(birth_data_sum)
 
     death_data_for_0 = death_data[death_data.Age == 0].reset_index()
     death_data_for_0.pop("index")
     # print(death_data_for_0)
 
-    survival_rate = []
+    # print(death_data_for_0[['Year', 'Sex', 'dx']])
 
+    death_data_sum = death_data_for_0.groupby(['Year']).sum().reset_index()
+    # print(death_data_sum)
+    birth_data_sum['D'] = death_data_sum['dx']
 
-    # print(death_data_for_0[['Year', 'Sex', 'qx']])
+    birth_data_sum['przezywalnosc'] = (birth_data_sum['Sum'] - birth_data_sum['D']) / birth_data_sum['Sum'] * 100
+    # print(birth_data_sum)
 
-    death_data_mean = death_data_for_0.groupby(['Year']).mean().reset_index()
-    # print(death_data_mean)
-    survival_rate = death_data_mean['qx']
-    # print(survival_rate)
+    zad15_data = zad15(birth_data_sum, death_data)
+    # print(zad15_data)
+    zad15_data[2014] = None
+    zad15_data[2015] = None
+    zad15_data[2016] = None
+    zad15_data[2017] = None
 
-    data_dict = zad15(birth_data,death_data)
+    birth_data_sum['D5'] = zad15_data.values()
+    # print(birth_data_sum)
+    birth_data_sum['przezywalnosc_5l'] = (birth_data_sum['Sum'] - birth_data_sum['D5']) / birth_data_sum['Sum'] * 100
+
 
     fig, ax = plt.subplots()
-    ax.plot(survival_rate, '-r')
-    ax.plot(data_dict.values(), '-b')
+    ax.plot(birth_data_sum['przezywalnosc'], '-r')
+    ax.plot(birth_data_sum['przezywalnosc_5l'], '-b')
+    # ax.legend()
+    plt.grid(True)
+    ax.set_title("Zadanie 14, 15")
     plt.show()
 
 
@@ -748,35 +783,31 @@ def zad15(birth_data, death_data):
     '''
 
     dff = death_data.groupby(["Year"]).dx.sum().reset_index()
+    years = []
     years = list(dff['Year'])
 
-    print(death_data)
+    # print(death_data)
 
-    death_data_mean = death_data.groupby(['Year', 'Age']).mean().reset_index()
-
-    print(death_data_mean)
-
-    # death_data_mean = death_data_mean[death_data_mean.Age> 5].reset_index()
-
-    print(death_data_mean)
     data_dict = {}
 
-    data = death_data_mean[['Year', 'Age', 'qx']]
-    print(data)
+    data = death_data[['Sex', 'Year', 'Age', 'dx']]
+    # print(data)
+    data = data[(data.Age == 0) | (data.Age == 1) | (data.Age == 2) | (data.Age == 3) | (data.Age == 4)]
+    # print(data)
+    data = data.groupby(by=["Year", "Age"]).sum()
+    # print(data)
 
     for year in years:
         try:
-            # print(year)
-            data_dict[year] = data.loc[(data['Year'] == year) & (data['Age'] == 0)].values[0][2] + data.loc[(data['Year'] == year+1) & (data['Age'] == 1)].values[0][2] +data.loc[(data['Year'] == year+2) & (data['Age'] == 2)].values[0][2] +data.loc[(data['Year'] == year+3) & (data['Age'] == 3)].values[0][2] +data.loc[(data['Year'] == year+4) & (data['Age'] == 4)].values[0][2]
-            # print(data_dict[year])
-
-        except IndexError:
+            data_dict[year] = int(data.loc[year, 0].values[0]) + \
+                              int(data.loc[year + 1, 1].values[0]) + \
+                              int(data.loc[year + 2, 2].values[0]) + \
+                              int(data.loc[year + 3, 3].values[0]) + \
+                              int(data.loc[year + 4, 4].values[0])
+        except KeyError:
             pass
 
-    # fig, ax = plt.subplots()
-    # ax.plot( data_dict.values(), '-b')
-    # plt.show()
-
+    # print(data_dict)
 
     return data_dict
 
@@ -795,12 +826,12 @@ def main():
     # zad6_2(birth_data)
     # zad7_2(birth_data)
     # zad8_2(birth_data)
-    zad9_2(birth_data)
+    # zad9_2(birth_data)
     # zad10_2(birth_data)
     # zad11_2(birth_data)
-    # death_data = zad12()
+    death_data = zad12()
     # zad13(birth_data, death_data)
-    # zad14(birth_data, death_data)
+    zad14(birth_data, death_data)
     # zad15(birth_data, death_data)
 
 
