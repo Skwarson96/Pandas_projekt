@@ -11,8 +11,8 @@ import math
 
 def zad1_2():
     ''' Wczytaj dane ze wszystkich plików do pojedynczej tablicy (używając Pandas). '''
-    os.chdir(r'names')
-    list_of_txt_files = glob.glob('*.txt')
+    # os.chdir(r'names')
+    list_of_txt_files = glob.glob('names/*.txt')
     list_of_txt_files.sort()
     columns = [ "Name", "Sex", "Number", "Year"]
 
@@ -22,19 +22,22 @@ def zad1_2():
         print(name_of_file)
         df1 = pd.DataFrame(pd.read_csv(name_of_file, sep=',', header=None))
         df1 = df1.rename(columns={0:"Name", 1:"Sex", 2:"Number"})
-        df1["Year"] = str(name_of_file[3:7])
+        # df1["Year"] = str(name_of_file[3:7])
+        # print(str(name_of_file[9:13]))
+        df1["Year"] = str(name_of_file[9:13])
         # print(type(df))
         df = df.append(df1)
     data2 = df.pivot(index=['Year', 'Name'], columns=['Sex'], values=['Number'])
-
+    print(data2)
     return data2
     # return df
 
 def zad2_2(data):
     ''' Określi ile różnych (unikalnych) imion zostało nadanych w tym czasie. '''
     data2 = data.groupby(level=1).sum()
-    # print(data2.shape)
+    print(data2)
     print('Ilosc nadanych unikalnych imion w pelnym okresie:',data2.shape[0])
+    # 99444
 
 def zad3_2(data):
     ''' Określi ile różnych (unikalnych) imion zostało nadanych w tym czasie rozróżniając imiona męskie i żeńskie. '''
@@ -50,7 +53,9 @@ def zad3_2(data):
     # print(data_male)
 
     print('Ilosc unikalnych kobiecych imion:', data_female.shape[0])
+    # 68332
     print('Ilosc unikalnych meskich imion:', data_male.shape[0])
+    # 42054
 
 def zad4_2(data):
     ''' Stwórz nowe kolumny frequency_male i frequency_female i określ popularność każdego z imion w danym każdym
@@ -71,21 +76,31 @@ def zad5_2(data):
     '''
 
     list_of_years = list(range(1880, 2020))
-    quantity_of_birth = []
-    ratio_boys_to_girls = {}
+    quantity_of_birth = {}
+    ratio= {}
     data2 = data.groupby(level=0).sum()
     # print(data2)
 
     for year in list_of_years:
-        quantity_of_birth.append(data2.loc[str(year),('Number', 'F')] + data2.loc[str(year),('Number', 'M')])
-        ratio_boys_to_girls[year] = (data2.loc[str(year),('Number', 'F')].astype(float) / data2.loc[str(year),('Number', 'M')].astype(float))
+        # print(year, data2.loc[str(year),('Number', 'F')] , data2.loc[str(year),('Number', 'M')])
+        quantity_of_birth[year] = (data2.loc[str(year),('Number', 'F')] + data2.loc[str(year),('Number', 'M')])
+        ratio[year] = (data2.loc[str(year),('Number', 'F')].astype(float) / data2.loc[str(year),('Number', 'M')].astype(float))
 
-    print("Najwieksza roznica: ", max(ratio_boys_to_girls, key=ratio_boys_to_girls.get))
-    print("Najmniejsza roznica: ", min(ratio_boys_to_girls, key=ratio_boys_to_girls.get))
+    print("Najwieksza roznica: ", max(ratio, key=ratio.get))
+    print("Najmniejsza roznica: ", min(ratio, key=ratio.get))
 
-    fig, ax = plt.subplots()
-    ax.plot(list_of_years, quantity_of_birth, '--r')
-    ax.plot(list_of_years, ratio_boys_to_girls.values(), '-b')
+    # Najwieksza roznica:  1901
+    # Najmniejsza roznica:  1880
+
+    fig, ax = plt.subplots(2, 1)
+    fig.suptitle("Zadanie 5")
+    ax[0].plot(list_of_years, quantity_of_birth.values(), '--r')
+    ax[0].set_xlabel('Rok')
+    ax[0].set_ylabel('Liczba urodzin w danym roku')
+
+    ax[1].plot(list_of_years, ratio.values(), '-b')
+    ax[1].set_xlabel('Rok')
+    ax[1].set_ylabel('Stosunek\n liczby narodzin dziewczynek\n do liczby narodzin chłopców')
     plt.show()
 
 def top_female(data):
@@ -243,11 +258,10 @@ def zad7_2(data):
                 special_harry_dict[year] = 0
 
     # -----------------------------------------------------------------
-    # POPULARNOSC
 
+    # POPULARNOSC
     data2 = data.groupby(level=0).sum()
     # print(data2)
-
 
     for year in list_of_years:
         try:
@@ -267,13 +281,11 @@ def zad7_2(data):
         except KeyError:
             popularity_harry_dict[year] = 0
 
-
-
     # print(mary_dict)
     # print(marilin_dict)
     # print(james_dict)
     # print(harry_dict)
-    #
+
     print('special_mary_dict', special_mary_dict)
     print('special_marilin_dict', special_marilin_dict)
     print('special_james_dict', special_james_dict)
@@ -299,13 +311,17 @@ def zad7_2(data):
     ax2.plot(list_of_years, popularity_harry_dict.values(), '--g')
     ax2.legend(['Mary%', 'Marilin%', 'James%', 'Harry%'], loc='upper right')
 
-
     ax1.set_title("Zadanie 7")
     ax1.set_xlabel("Rok")
     ax1.set_ylabel("Liczba nadanych imion")
     ax2.set_ylabel("Popularność imienia [%]")
 
     plt.show()
+
+    # special_mary_dict {1940: 56206, 1980: 11475, 2019: 2209}
+    # special_marilin_dict {1940: 0, 1980: 6, 2019: 7}
+    # special_james_dict {1940: 62477, 1980: 39327, 2019: 13087}
+    # special_harry_dict {1940: 4679, 1980: 860, 2019: 413}
 
 def zad8_2(data):
     '''
@@ -388,12 +404,14 @@ def zad8_2(data):
 
     # print(difference)
     print("Rok z najwieksza roznica:", max(difference, key=difference.get))
-
+    # Rok z najwieksza roznica: 1889
 
     fig, ax = plt.subplots()
     ax.plot(list_of_years, female_ratio, '-r')
     ax.plot(list_of_years, male_ratio, '-b')
-
+    ax.set_title("Zadanie 8")
+    ax.set_xlabel("Rok")
+    ax.set_ylabel("Procent w danym roku stanowiły imiona należące do rankingu top1000 [%]")
     ax.legend(['female_ratio [%]', 'male_ratio [%]'], loc='upper right')
     plt.show()
     pass
@@ -411,119 +429,97 @@ def zad9_2(data):
      - Dla 3 liter dla których zaobserwowano największą zmianę wyświetl przebieg trendu popularności w czasie
     '''
 
-    # print("???")
-    print(data)
+    # print(data)
     list_of_years = list(range(1880, 2020))
-    special_years = ['1910', '1960', '2015']
 
-    # data2 = data.unstack('Name')
-    data2 = data.reset_index()
-    print(data2)
+    last_letters_df = data.reset_index()
+    last_letters_df['Name'] = last_letters_df['Name'].str.strip().str[-1]
 
-    data2['Name'] = data2['Name'].str.strip().str[-1]
-    print(data2)
+    last_letters_df = last_letters_df.groupby(by=["Year", "Name"]).sum()
 
-    # print(data2.groupby(by=["Year", "Name"]).sum())
-    data2 = data2.groupby(by=["Year", "Name"]).sum()
-    print(data2)
-    del data2['Year']
-    del data2['Name']
-    print(data2)
-    # print(special_years[0])
-    data_1910 = data2.loc[special_years[0]]
-    data_1960 = data2.loc[special_years[1]]
-    data_2015 = data2.loc[special_years[2]]
-    print('data_1910', data_1910)
-    data_1910_F_sum = data_1910.loc[:, ("Number",'F')].sum()
-    data_1910_M_sum = data_1910.loc[:, ("Number",'M')].sum()
-    # print('data_1910_F_sum', data_1910_F_sum)
-    # print('data_1910_M_sum', data_1910_M_sum)
-    data_1910[("Number", "F")] = data_1910[("Number", "F")]/ data_1910_F_sum
-    data_1910[("Number", "M")] = data_1910[("Number", "M")] / data_1910_M_sum
-
-    data_1960_F_sum = data_1960.loc[:, ("Number",'F')].sum()
-    data_1960_M_sum = data_1960.loc[:, ("Number",'M')].sum()
-    data_1960[("Number", "F")] = data_1960[("Number", "F")]/ data_1960_F_sum
-    data_1960[("Number", "M")] = data_1960[("Number", "M")] / data_1960_M_sum
-
-    data_2015_F_sum = data_2015.loc[:, ("Number",'F')].sum()
-    data_2015_M_sum = data_2015.loc[:, ("Number",'M')].sum()
-    data_2015[("Number", "F")] = data_2015[("Number", "F")]/ data_2015_F_sum
-    data_2015[("Number", "M")] = data_2015[("Number", "M")] / data_2015_M_sum
-
-    print('data_1910', data_1910)
-    # print('sum data 1910 M', data_1910.loc[:, ("Number",'M')].sum())
-    # print(data_1960)
-    # print(data_2015)
-
-    data_1910.loc['q', [("Number", "F"), ("Number", "M")]] = (0, 0)
-    data_1910.loc['j', [("Number", "F"), ("Number", "M")]] = (0, 0)
-    data_1910.sort_index(inplace=True)
-    # labels = list(data_1910.loc[:,("Number", "F")].index.values)
-    # print('labels', labels)
-    # print(len(labels))
-
-    data_1960.loc['q', [("Number", "F"), ("Number", "M")]] = (0, 0)
-    data_1960.loc['j', [("Number", "F"), ("Number", "M")]] = (0, 0)
-    data_1960.sort_index(inplace=True)
-    # print(data_1960)
-
-    # labels = list(data_1960.loc[:,("Number", "F")].index.values)
-    # print('labels', labels)
-    # print(len(labels))
-
-    labels = list(data_2015.loc[:,("Number", "F")].index.values)
-    # print('labels', labels)
-    # print(len(labels))
+    del last_letters_df['Year']
+    del last_letters_df['Name']
 
 
-    # print('data_1910.loc[:,("Number", "F")]', data_1910.loc[:,("Number", "F")])
-    # print('data_1910.loc[:,("Number", "M")]', data_1910.loc[:,("Number", "M")])
-    # print(type(data_1910.loc[:,("Number", "M")]))
-    # print(data_1910.loc[:,("Number", "M")].values)
-    # print(data_1910.loc[:,("Number", "M")].values*100)
-    # F_list = list(data_1910.loc[:,("Number", "F")].values *100)
-    # M_list = list(data_1910.loc[:,("Number", "M")].values *100)
+    male_last_letters_df2 = pd.DataFrame()
+    male_last_letters_df2['2015'] = last_letters_df.loc['2015', ('Number', 'M')]
+    male_last_letters_df2['1960'] = last_letters_df.loc['1960', ('Number', 'M')]
+    male_last_letters_df2['1910'] = last_letters_df.loc['1910', ('Number', 'M')]
 
-    # print(F_list)
-    # print('len F list', len(F_list))
-    # print('len labels', len(labels))
+
+    male_last_letters_df2['2015 normalize'] = male_last_letters_df2['2015'] / last_letters_df.loc['2015'].loc[:, ("Number",'M')].sum()
+    male_last_letters_df2['1960 normalize'] = male_last_letters_df2['1960'] / last_letters_df.loc['1960'].loc[:, ("Number",'M')].sum()
+    male_last_letters_df2['1910 normalize'] = male_last_letters_df2['1910'] / last_letters_df.loc['1910'].loc[:, ("Number",'M')].sum()
+
+    male_last_letters_df2 = male_last_letters_df2.fillna(0)
+    # print(male_last_letters_df2)
+    # print(male_last_letters_df2.sum())
+
+
+    labels = male_last_letters_df2.index.tolist()
+    # print(labels)
 
 
     fig, ax = plt.subplots()
     x = np.arange(len(labels))
 
-    barWidth = 0.1
-    r1 = np.arange(len(labels))
-    print(r1)
-    r2 = [a + barWidth for a in r1]
-    print(r2)
-    r3 = [a + barWidth for a in r2]
-    print(r3)
-    r4 = [a + barWidth for a in r3]
-    print(r4)
-    r5 = [a + barWidth for a in r4]
-    print(r5)
-    r6 = [a + barWidth for a in r5]
-    print(r6)
-
-    ax.bar(r1, data_1910.loc[:,("Number", "F")].values *100, barWidth, label='1910 F')
-    ax.bar(r2, data_1910.loc[:,("Number", "M")].values *100, barWidth, label='1910 M')
-
-    ax.bar(r3, data_1960.loc[:,("Number", "F")].values *100, barWidth, label='1960 F')
-    ax.bar(r4, data_1960.loc[:,("Number", "M")].values *100, barWidth, label='1960 M')
-
-    ax.bar(r5, data_2015.loc[:,("Number", "F")].values *100, barWidth, label='2015 F')
-    ax.bar(r6, data_2015.loc[:,("Number", "M")].values *100, barWidth, label='2015 M')
+    barWidth = 0.4
+    ax.bar(x - barWidth, male_last_letters_df2['1910 normalize'].values *100, barWidth/2, label='1910')
+    ax.bar(x , male_last_letters_df2['1960 normalize'].values *100, barWidth/2, label='1960')
+    ax.bar(x + barWidth, male_last_letters_df2['2015 normalize'].values *100, barWidth/2, label='2015')
 
     ax.set_title('Zadanie 9')
-    # ax.set_xticks(x)
-    # ax.set_xticklabels(labels)
-    plt.xticks([r + barWidth for r in range(len(labels))], labels)
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels)
     ax.set_ylabel('%')
     ax.legend()
 
+    # plt.show()
+
+
+    male_last_letters_df2['abs (2015 - 1910)'] = abs(male_last_letters_df2['2015 normalize'] - male_last_letters_df2['1910 normalize'])
+    # print(male_last_letters_df2)
+    column = male_last_letters_df2['abs (2015 - 1910)']
+    max_index = column.idxmax()
+    print('Zadanie 9 litera dla ktorej wystapil najwiekszy wzrost/spadek:',max_index)
+
+    letters_with_biggest_changes = male_last_letters_df2['abs (2015 - 1910)'].nlargest(3).index.tolist()
+    print(letters_with_biggest_changes)
+    print(last_letters_df)
+
+    # data = data[(data.Age == 0) | (data.Age == 1) | (data.Age == 2) | (data.Age == 3) | (data.Age == 4)]
+    biggest_changes_df = last_letters_df.copy()
+    #  # print(biggest_changes_df)
+    biggest_changes_df.reset_index(inplace=True)
+
+    del biggest_changes_df[('Number', 'F')]
+
+
+    biggest_changes_df = biggest_changes_df[(biggest_changes_df.Name == letters_with_biggest_changes[0]) | (
+                biggest_changes_df.Name == letters_with_biggest_changes[1]) | (
+                                                        biggest_changes_df.Name == letters_with_biggest_changes[2])]
+
+    biggest_changes_df = biggest_changes_df.pivot(index=['Year'], columns=['Name'], values=['Number'])
+    print(biggest_changes_df)
+
+
+    labels = biggest_changes_df[('Number', letters_with_biggest_changes[0])].index.tolist()
+    x = np.arange(len(labels))
+
+    fig, ax = plt.subplots()
+
+    ax.plot( biggest_changes_df[('Number', letters_with_biggest_changes[0])].values, '-r')
+    ax.plot( biggest_changes_df[('Number', letters_with_biggest_changes[1])].values, '-b')
+    ax.plot( biggest_changes_df[('Number', letters_with_biggest_changes[2])].values, '-k')
+
+    ax.set_title("Zadanie 9")
+    ax.set_xlabel("Rok")
+    ax.set_ylabel("Popularnosc liter")
+    plt.xticks(ticks=x, labels=labels)
+
+    ax.legend([letters_with_biggest_changes[0], letters_with_biggest_changes[1], letters_with_biggest_changes[2]], loc='upper right')
     plt.show()
+
 
 def zad10_2(data):
     '''
@@ -539,8 +535,9 @@ def zad10_2(data):
     # print(data2)
     data2 = data2.sort_values()
     # print(data2)
-    print(data2.index[-1])
-    # print(type(data2))
+
+    print('Najpopularniejsze imie nadawane chlopcom i dziewczynka:',data2.index[-1])
+    # Najpopularniejsze imie nadawane chlopcom i dziewczynka: James
 
 def zad11_2(data):
     '''
@@ -555,8 +552,29 @@ def zad11_2(data):
 
     print(data)
 
-    data2 = data.dropna()
+    data = data.dropna()
+    print(data)
+
+    data2 = data.groupby(level=0).sum()
     print(data2)
+
+    data_zad11 = data.copy()
+    data_zad11['Number','frequency_female'] = data.loc[:,('Number', 'F')]/data2.loc[:,('Number', 'F')]
+    data_zad11['Number', 'frequency_male'] = data.loc[:,('Number', 'M')]/data2.loc[:,('Number', 'M')]
+    print(data_zad11)
+    data_zad11['Number', 'popularity'] = data_zad11.loc[:,('Number', 'frequency_male')]/(data_zad11.loc[:,('Number', 'frequency_male')] + data_zad11.loc[:,('Number', 'frequency_female')])
+    print(data_zad11)
+
+    #
+    # print(data2)
+    #     data_zad4['Number','frequency_female'] = data.loc[:,('Number', 'F')]/data2.loc[:,('Number', 'F')]
+    # data2['Number', 'F/M'] = data2.loc[:,('Number', 'F')]/data2.loc[:,('Number', 'M')]
+    # print(data2)
+
+
+
+
+
 
 def zad12():
     '''
@@ -564,7 +582,7 @@ def zad12():
     opis: https://www.mortality.org/Public/ExplanatoryNotes.php.
     Spróbuj zagregować dane już na etapie zapytania SQL.
     '''
-    os.chdir('..')  # back to main folder
+    # os.chdir('..')  # back to main folder
     conn = sqlite3.connect("USA_ltper_1x1.sqlite")  # połączenie do bazy danych - pliku
     c = conn.cursor()
 
@@ -739,13 +757,9 @@ def zad15(birth_data, death_data):
 
 
 def main():
-    # data = zad1()
     birth_data = zad1_2()
-    # zad2(data)
     # zad2_2(birth_data)
-    # zad3(data)
-    zad3_2(birth_data)
-    # zad4(data)
+    # zad3_2(birth_data)
     # zad4_2(birth_data)
     # zad5_2(birth_data)
     # zad6_2(birth_data)
@@ -753,7 +767,7 @@ def main():
     # zad8_2(birth_data)
     # zad9_2(birth_data)
     # zad10_2(birth_data)
-    # zad11_2(birth_data)
+    zad11_2(birth_data)
     # death_data = zad12()
     # zad13(birth_data, death_data)
     # zad14(birth_data, death_data)
