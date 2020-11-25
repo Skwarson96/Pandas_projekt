@@ -555,20 +555,20 @@ def zad11_2(data):
      - wkreśl przebieg trendu dla tych imion
     '''
     list_of_years = list(range(1880, 2020))
-    print(data)
+    # print(data)
 
     data = data.dropna()
-    print(data)
+    # print(data)
 
     data2 = data.groupby(level=0).sum()
-    print(data2)
+    # print(data2)
 
     data_zad11 = data.copy()
     data_zad11['Number','frequency_female'] = data.loc[:,('Number', 'F')]/data2.loc[:,('Number', 'F')]
     data_zad11['Number', 'frequency_male'] = data.loc[:,('Number', 'M')]/data2.loc[:,('Number', 'M')]
-    print(data_zad11)
+    # print(data_zad11)
     data_zad11['Number', 'popularity'] = data_zad11.loc[:,('Number', 'frequency_male')]/(data_zad11.loc[:,('Number', 'frequency_male')] + data_zad11.loc[:,('Number', 'frequency_female')])
-    print(data_zad11)
+    # print(data_zad11)
 
     female_male_names_df = data_zad11.drop(data_zad11[(data_zad11.Number.popularity < 0.3) & (data_zad11.Number.popularity > 0.7)].index)
     # print(female_male_names_df)
@@ -577,7 +577,7 @@ def zad11_2(data):
     # del female_male_names_df['frequency_male']
     # del female_male_names_df['popularity']
 
-    print(female_male_names_df)
+    # print(female_male_names_df)
     # female_male_names_df = female_male_names_df.reset_index()
     # print(female_male_names_df)
 
@@ -597,19 +597,79 @@ def zad11_2(data):
     data_1880_1920_sum = data_1880_1920.groupby(level=0).sum()
     data_2000_2020_sum = data_2000_2020.groupby(level=0).sum()
 
-    print(data_1880_1920_sum)
-    print(data_2000_2020_sum)
+    # print(data_1880_1920_sum)
+    # print(data_2000_2020_sum)
 
-    data_1880_1920 = data_1880_1920.groupby(level="Name").sum()
-    data_2000_2020 = data_2000_2020.groupby(level="Name").sum()
+    data_1880_1920_sum = data_1880_1920.sum()
+    data_2000_2020_sum = data_2000_2020.sum()
 
-    print(data_1880_1920)
-    print(data_2000_2020)
+    # print(data_1880_1920_sum)
+    # print(data_2000_2020_sum)
 
-    data_1880_1920['Number','frequency_female'] = data_1880_1920.loc[:,('Number', 'F')]/data_1880_1920_sum.loc[:,('Number', 'F')]
-    # data_zad11['Number', 'frequency_male'] = data.loc[:,('Number', 'M')]/data2.loc[:,('Number', 'M')]
+    data_1880_1920 = data_1880_1920.reset_index()
+    # last_letters_df['Name'] = last_letters_df['Name'].str.strip().str[-1]
+    data_1880_1920 = data_1880_1920.groupby(by=["Year", "Name"]).sum()
+    del data_1880_1920['Year']
+    del data_1880_1920['Name']
+    # print(data_1880_1920)
 
-    print(data_1880_1920)
+
+    data_1880_1920 = data_1880_1920.groupby(level=["Name"]).sum()
+    # data_2000_2020 = data_2000_2020.groupby(level="Name").sum()
+    #
+    # print(data_1880_1920)
+    # print(data_2000_2020)
+
+    data_1880_1920['Number','frequency_female'] = data_1880_1920.loc[:,('Number', 'F')]/data_1880_1920_sum.loc[('Number', 'F')]
+    data_1880_1920['Number', 'frequency_male'] = data_1880_1920.loc[:,('Number', 'M')]/data_1880_1920_sum.loc[('Number', 'M')]
+    data_1880_1920['Number', 'popularity'] = data_1880_1920.loc[:, ('Number', 'frequency_male')] / (
+                data_1880_1920.loc[:, ('Number', 'frequency_male')] + data_1880_1920.loc[:, ('Number', 'frequency_female')])
+    data_1880_1920 = data_1880_1920.reset_index()
+    # print(data_1880_1920)
+
+
+    data_2000_2020 = data_2000_2020.reset_index()
+    # last_letters_df['Name'] = last_letters_df['Name'].str.strip().str[-1]
+    data_2000_2020 = data_2000_2020.groupby(by=["Year", "Name"]).sum()
+    del data_2000_2020['Year']
+    del data_2000_2020['Name']
+
+    data_2000_2020 = data_2000_2020.groupby(level=["Name"]).sum()
+
+    data_2000_2020['Number', 'frequency_female'] = data_2000_2020.loc[:, ('Number', 'F')] / data_2000_2020_sum.loc[
+        ('Number', 'F')]
+    data_2000_2020['Number', 'frequency_male'] = data_2000_2020.loc[:, ('Number', 'M')] / data_2000_2020_sum.loc[
+        ('Number', 'M')]
+    data_2000_2020['Number', 'popularity'] = data_2000_2020.loc[:, ('Number', 'frequency_male')] / (
+            data_2000_2020.loc[:, ('Number', 'frequency_male')] + data_2000_2020.loc[:, ('Number', 'frequency_female')])
+    data_2000_2020 = data_2000_2020.reset_index()
+    # print(data_2000_2020)
+
+    names_fom_two_time_frames = pd.DataFrame()
+    names_fom_two_time_frames = data_1880_1920[data_1880_1920.Name.isin(data_2000_2020.Name)]
+    # print(names_fom_two_time_frames)
+
+    data_1880_1920.set_index('Name', inplace=True)
+    data_2000_2020.set_index('Name', inplace=True)
+    # print(data_1880_1920)
+    # print(data_2000_2020)
+
+    # for name in names_fom_two_time_frames['Name']:
+    data_names = pd.DataFrame()
+    data_names['Name'] = names_fom_two_time_frames['Name']
+    # print(data_names)
+    list_names = []
+    for name in names_fom_two_time_frames['Name']:
+        # print(name)
+        # print(data_1880_1920.loc[name, ('Number', 'popularity')])
+         list_names.append(abs(data_1880_1920.loc[name, ('Number', 'popularity')] - data_2000_2020.loc[name, ('Number', 'popularity')]))
+    data_names['popularity'] = list_names
+    # print(data_names)
+
+    most_popular_female_male_names = []
+    most_popular_female_male_names = data_names['popularity'].nlargest(2).index.tolist()
+    print("Zadanie 11")
+    print(data_names.loc[most_popular_female_male_names[0], 'Name'], data_names.loc[most_popular_female_male_names[1], 'Name'])
 
 def zad12():
     '''
@@ -782,20 +842,20 @@ def zad15(birth_data, death_data):
 
 def main():
     birth_data = zad1_2()
-    zad2_2(birth_data)
-    zad3_2(birth_data)
-    zad4_2(birth_data)
-    zad5_2(birth_data)
-    zad6_2(birth_data)
-    zad7_2(birth_data)
-    zad8_2(birth_data)
-    zad9_2(birth_data)
-    zad10_2(birth_data)
-    # zad11_2(birth_data)
-    death_data = zad12()
-    zad13(birth_data, death_data)
-    zad14(birth_data, death_data)
-    zad15(birth_data, death_data)
+    # zad2_2(birth_data)
+    # zad3_2(birth_data)
+    # zad4_2(birth_data)
+    # zad5_2(birth_data)
+    # zad6_2(birth_data)
+    # zad7_2(birth_data)
+    # zad8_2(birth_data)
+    # zad9_2(birth_data)
+    # zad10_2(birth_data)
+    zad11_2(birth_data)
+    # death_data = zad12()
+    # zad13(birth_data, death_data)
+    # zad14(birth_data, death_data)
+    # zad15(birth_data, death_data)
 
 
 
