@@ -567,36 +567,29 @@ def zad12():
 
 def zad13(birth_data, death_data):
     '''
-    Wyznacz przyrost naturalny w analizowanym okresie
+    Wyznacz przyrost naturalny w analizowanym okresie (analizowany okres: 1959-2017)
     '''
     # przyrost naturalny = liczba urodzen - liczba zgonow
     # stopa przyrostu naturalnego = (liczba urodzen - liczba zgonow)/liczba mieszkancow
 
-    # analizowany okres = 1959-2017
-
-    dff = death_data.groupby(["Year"]).dx.sum().reset_index()
-
-    years = list(dff['Year'])
-    years = [str(int) for int in years]
-
-
-    # suma urodzen dla kazdej plci w kazdym roku
-    birth_data_sum = birth_data.groupby(["Year"]).sum().reset_index()
-
-    # zostawienie interesujących lat 1959-2017
-    birth_data_sum = birth_data_sum[birth_data_sum["Year"].isin(years)]
-    birth_data_sum = birth_data_sum.reset_index()
-
+    # suma po latach ( lata jako indeksy)
+    birth_data_sum = birth_data.groupby(["Year"]).sum()
+    # suma kobiet i mezczyzn
     birth_data_sum = birth_data_sum.sum(axis = 1, skipna = True)
 
-    birthrate = {}
+    # suma po latach ( lata jako indeksy)
+    dff = death_data.groupby(["Year"]).dx.sum()
 
-    for idx , year in enumerate(years):
-        birthrate[year] = int(birth_data_sum[idx]-dff['dx'][idx])
-        pass
+    # ograniczenie danych do analizowanego okresu
+    birth_data_sum2 = birth_data_sum.loc[(birth_data_sum.index >= '1959') & (birth_data_sum.index <= '2017')]
+    dff2 = dff.loc[(dff.index >= 1959) & (dff.index <= 2017)]
 
+    # obliczenie przyrostu
+    birthrate = birth_data_sum2.values - dff2.values
+
+    # wykres:
     fig, ax = plt.subplots()
-    ax.plot(birthrate.keys(), birthrate.values(), '-r')
+    ax.plot(birth_data_sum2.index, birthrate, '-r')
 
     ax.set_title("Zadanie 13")
     # plt.show()
@@ -688,16 +681,16 @@ def zad15(birth_data, death_data):
 
 def main():
     birth_data = zad1_2()
-    zad2_2(birth_data)
-    zad3_2(birth_data)
-    zad4_2(birth_data)
-    zad5_2(birth_data)
-    zad6_2(birth_data)
-    zad7_2(birth_data)
-    zad8_2(birth_data)
-    zad9_2(birth_data)
-    zad10_2(birth_data)
-    zad11_2(birth_data)
+    # zad2_2(birth_data)
+    # zad3_2(birth_data)
+    # zad4_2(birth_data)
+    # zad5_2(birth_data)
+    # zad6_2(birth_data)
+    # zad7_2(birth_data)
+    # zad8_2(birth_data)
+    # zad9_2(birth_data)
+    # zad10_2(birth_data)
+    # zad11_2(birth_data)
     death_data = zad12()
     zad13(birth_data, death_data)
     zad14(birth_data, death_data)
