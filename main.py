@@ -96,74 +96,57 @@ def zad5_2(data):
     # plt.show()
 
 def top_female(data):
-    list_of_years = list(range(1880, 2020))
 
-    female_sort_data = data.sort_values(by=['Year', ('Number', 'F')], ascending=False)
+    # sort all female values
+    data_female = data.sort_values(by=['Year', ('Number', 'F')], ascending=False)
 
-    top_all = {}
-    for year in list_of_years:
-        most_female_for_year = []
+    # find top 1000 for every year
+    data_female2 = data_female.groupby(level=0).head(1000)
 
-        female_sort_data2 = female_sort_data.loc[[str(year)], [('Number', 'F')]].head(1000)
+    # sum number of names for all time
+    data_female2 = data_female2.groupby(level="Name").sum()
 
-        for idx in range(1000):
-            most_female_for_year.append(female_sort_data2.index[idx][1])
-            pass
+    # sort values and take first 1000
+    top_1000_female = data_female2.sort_values(by=[('Number', 'F')], ascending=False).head(1000)
 
-        list1 = female_sort_data2.loc[(str(year)), ('Number', 'F')].tolist()
-        top_year_list_dict = dict(zip(most_female_for_year, list1))
+    top_1000_female = top_1000_female.loc[:, ('Number', 'F')]
 
-
-        for key, value in top_year_list_dict.items():
-            if key in top_all.keys():
-                top_all[key] = top_all[key] + value
-            else:
-                top_all[key] = value
-
-
-    sort_female = sorted(top_all.items(), key=lambda x: x[1], reverse=True)
-    return sort_female[:1000]
+    return top_1000_female
 
 def top_male(data):
-    list_of_years = list(range(1880, 2020))
+    # sort all male values
+    data_male = data.sort_values(by=['Year', ('Number', 'M')], ascending=False)
 
-    male_sort_data = data.sort_values(by=['Year', ('Number', 'M')], ascending=False)
+    # find top 1000 for every year
+    data_male2 = data_male.groupby(level=0).head(1000)
 
-    top_all = {}
-    for year in list_of_years:
+    # sum number of names for all time
+    data_male2 = data_male2.groupby(level="Name").sum()
 
-        most_male_for_year = []
-        male_sort_data2 = male_sort_data.loc[[str(year)], [('Number', 'M')]].head(1000)
+    # sort values and take first 1000
+    top_1000_male = data_male2.sort_values(by=[('Number', 'M')], ascending=False).head(1000)
 
-        for idx in range(1000):
-            most_male_for_year.append(male_sort_data2.index[idx][1])
+    top_1000_male = top_1000_male.loc[:, ('Number', 'M')]
 
-        list1 = male_sort_data2.loc[(str(year)), ('Number', 'M')].tolist()
-        top_year_list_dict = dict(zip(most_male_for_year, list1))
-
-        for key, value in top_year_list_dict.items():
-            if key in top_all.keys():
-                top_all[key] = top_all[key] + value
-            else:
-                top_all[key] = value
-
-    sort_male = sorted(top_all.items(), key=lambda x: x[1], reverse=True)
-
-    return sort_male[:1000]
+    return top_1000_male
 
 def zad6_2(data):
     '''Wyznacz 1000 najpopularniejszych imion dla każdej płci w całym zakresie czasowym,
      metoda powinna polegać na wyznaczeniu 1000 najpopularniejszych imion dla każdego roku i dla każdej płci a
      następnie ich zsumowaniu w celu ustalenia rankingu top 1000 dla każdej płci.'''
+
     print("Zadanie 6")
+
     print("Top female names:")
-    top_female_df = pd.DataFrame(top_female(data))
+    top_female_df = top_female(data)
     print(top_female_df)
     # ('Mary', 4128052)
     print("Top male names:")
-    top_male_df = pd.DataFrame(top_male(data))
+    top_male_df = top_male(data)
     print(top_male_df)
     # ('James', 5177716)
+
+    return top_female_df, top_male_df
 
 def zad7_2(data):
     '''
@@ -286,15 +269,16 @@ def zad7_2(data):
     # special_james_dict {1940: 62477, 1980: 39327, 2019: 13087}
     # special_harry_dict {1940: 4679, 1980: 860, 2019: 413}
 
-def zad8_2(data):
+def zad8_2(data, top_female_, top_male_):
     '''
     Wykreśl wykres z podziałem na lata i płeć zawierający informację jaki procent w danym roku
     stanowiły imiona należące do rankingu top1000. Wykres ten opisuje różnorodność imion,
     zanotuj rok w którym zaobserwowano największą różnicę w różnorodności między imionami męskimi a żeńskimi.
     '''
     list_of_years = list(range(1880, 2020))
-    top_female_ = top_female(data)
-    top_male_ = top_male(data)
+
+    top_female_ = top_female_.index.tolist()
+    top_male_ = top_male_.index.tolist()
 
     sum_of_female_names_from_top1000 = 0
     dict_female_top1000 = {}
@@ -311,7 +295,7 @@ def zad8_2(data):
 
 
     for year in list_of_years:
-        for name, q in top_female_:
+        for name in top_female_:
             try:
                 if pd.isna(data.loc[(str(year), name), ('Number', 'F')]):
                     pass
@@ -323,7 +307,7 @@ def zad8_2(data):
         dict_female_top1000[year] = sum_of_female_names_from_top1000
         sum_of_female_names_from_top1000 = 0
         # -----------------------
-        for name, q in top_male_:
+        for name in top_male_:
             try:
                 if pd.isna(data.loc[(str(year), name), ('Number', 'M')]):
                     pass
@@ -347,7 +331,7 @@ def zad8_2(data):
 
     print("Zadanie 8")
     print("Rok z najwieksza roznica:", max(difference, key=difference.get))
-    # Rok z najwieksza roznica: 1889
+    # Rok z najwieksza roznica: 2011
 
     fig, ax = plt.subplots()
     ax.plot(list_of_years, female_ratio, '-r')
@@ -357,7 +341,6 @@ def zad8_2(data):
     ax.set_ylabel("Procent w danym roku stanowiły imiona należące do rankingu top1000 [%]")
     ax.legend(['female_ratio [%]', 'male_ratio [%]'], loc='upper right')
     # plt.show()
-    pass
 
 def zad9_2(data):
     '''
@@ -447,7 +430,6 @@ def zad9_2(data):
 
     ax.legend([letters_with_biggest_changes[0], letters_with_biggest_changes[1], letters_with_biggest_changes[2]], loc='upper right')
     # plt.show()
-
 
 def zad10_2(data):
     '''
@@ -675,22 +657,18 @@ def zad15(birth_data, death_data):
 
     return data_dict
 
-
-
-
-
 def main():
     birth_data = zad1_2()
-    # zad2_2(birth_data)
-    # zad3_2(birth_data)
-    # zad4_2(birth_data)
-    # zad5_2(birth_data)
-    # zad6_2(birth_data)
-    # zad7_2(birth_data)
-    # zad8_2(birth_data)
-    # zad9_2(birth_data)
-    # zad10_2(birth_data)
-    # zad11_2(birth_data)
+    zad2_2(birth_data)
+    zad3_2(birth_data)
+    zad4_2(birth_data)
+    zad5_2(birth_data)
+    f_1000, m_1000 = zad6_2(birth_data)
+    zad7_2(birth_data)
+    zad8_2(birth_data, f_1000, m_1000)
+    zad9_2(birth_data)
+    zad10_2(birth_data)
+    zad11_2(birth_data)
     death_data = zad12()
     zad13(birth_data, death_data)
     zad14(birth_data, death_data)
