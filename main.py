@@ -275,72 +275,31 @@ def zad8_2(data, top_female_, top_male_):
     stanowiły imiona należące do rankingu top1000. Wykres ten opisuje różnorodność imion,
     zanotuj rok w którym zaobserwowano największą różnicę w różnorodności między imionami męskimi a żeńskimi.
     '''
-    list_of_years = list(range(1880, 2020))
+    years = data.index.get_level_values(0).unique()
 
-    top_female_ = top_female_.index.tolist()
-    top_male_ = top_male_.index.tolist()
+    # female
+    top_female_by_year = data.loc[(years, top_female_.index),('Number', 'F')]
+    top_female_sum_by_year = top_female_by_year.groupby(level=0).sum()
+    all_female_by_year = data.loc[years, ('Number', 'F')]
+    all_female_sum_by_year = all_female_by_year.groupby(level=0).sum()
+    female_ratio = top_female_sum_by_year / all_female_sum_by_year
 
-    sum_of_female_names_from_top1000 = 0
-    dict_female_top1000 = {}
-    sum_of_male_names_from_top1000 = 0
-    dict_male_top1000 = {}
+    # male
+    top_male_by_year = data.loc[(years, top_male_.index),('Number', 'M')]
+    top_male_sum_by_year = top_male_by_year.groupby(level=0).sum()
+    all_male_by_year = data.loc[years, ('Number', 'M')]
+    all_male_sum_by_year = all_male_by_year.groupby(level=0).sum()
+    male_ratio = top_male_sum_by_year / all_male_sum_by_year
 
-
-    dict_female_all = {}
-    dict_male_all = {}
-    data2 = data.groupby(level=0).sum()
-    for year in list_of_years:
-        dict_female_all[year] = data2.loc[str(year),('Number', 'F')]
-        dict_male_all[year] = data2.loc[str(year),('Number', 'M')]
-
-
-    for year in list_of_years:
-        for name in top_female_:
-            try:
-                if pd.isna(data.loc[(str(year), name), ('Number', 'F')]):
-                    pass
-                else:
-                    sum_of_female_names_from_top1000 = sum_of_female_names_from_top1000 + data.loc[(str(year), name), ('Number', 'F')]
-            except KeyError:
-                pass
-
-        dict_female_top1000[year] = sum_of_female_names_from_top1000
-        sum_of_female_names_from_top1000 = 0
-        # -----------------------
-        for name in top_male_:
-            try:
-                if pd.isna(data.loc[(str(year), name), ('Number', 'M')]):
-                    pass
-                else:
-                    sum_of_male_names_from_top1000 = sum_of_male_names_from_top1000 + data.loc[(str(year), name), ('Number', 'M')]
-            except KeyError:
-                pass
-
-        dict_male_top1000[year] = sum_of_male_names_from_top1000
-        sum_of_male_names_from_top1000 = 0
+    df_difference = np.abs(female_ratio - male_ratio)
+    print("Year with biggest difference: ", df_difference.idxmax())
 
 
-    female_ratio = []
-    male_ratio = []
-    difference = {}
-
-    for year in list_of_years:
-        female_ratio.append(dict_female_top1000[year] / dict_female_all[year] * 100)
-        male_ratio.append(dict_male_top1000[year] / dict_male_all[year] * 100)
-        difference[year] = abs((dict_female_top1000[year] / dict_female_all[year]) - (dict_male_top1000[year] / dict_male_all[year]))
-
-    print("Zadanie 8")
-    print("Rok z najwieksza roznica:", max(difference, key=difference.get))
-    # Rok z najwieksza roznica: 2011
-
-    fig, ax = plt.subplots()
-    ax.plot(list_of_years, female_ratio, '-r')
-    ax.plot(list_of_years, male_ratio, '-b')
-    ax.set_title("Zadanie 8")
-    ax.set_xlabel("Rok")
-    ax.set_ylabel("Procent w danym roku stanowiły imiona należące do rankingu top1000 [%]")
-    ax.legend(['female_ratio [%]', 'male_ratio [%]'], loc='upper right')
-    # plt.show()
+    plt.figure()
+    plt.plot(years, female_ratio)
+    plt.plot(years, male_ratio)
+    plt.legend(['Female', "Male"])
+    plt.xlim(left=np.min(years.values), right=np.max(years.values))
 
 def zad9_2(data):
     '''
